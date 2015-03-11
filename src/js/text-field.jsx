@@ -1,7 +1,7 @@
 var React = require('react');
-var Classable = require('./mixins/classable.js');
-var DomIdable = require('./mixins/dom-idable.js');
-var EnhancedTextarea = require('./enhanced-textarea.jsx');
+var Classable = require('./mixins/classable');
+var DomIdable = require('./mixins/dom-idable');
+var EnhancedTextarea = require('./enhanced-textarea');
 
 var TextField = React.createClass({
 
@@ -16,6 +16,8 @@ var TextField = React.createClass({
     onBlur: React.PropTypes.func,
     onChange: React.PropTypes.func,
     onFocus: React.PropTypes.func,
+    onKeyDown: React.PropTypes.func,
+    onEnterKeyDown: React.PropTypes.func,
     type: React.PropTypes.string
   },
 
@@ -102,7 +104,8 @@ var TextField = React.createClass({
       className: 'mui-text-field-input',
       id: inputId,
       onBlur: this._handleInputBlur,
-      onFocus: this._handleInputFocus
+      onFocus: this._handleInputFocus,
+      onKeyDown: this._handleInputKeyDown
     };
 
     if (!this.props.hasOwnProperty('valueLink')) {
@@ -155,7 +158,7 @@ var TextField = React.createClass({
   },
 
   setErrorText: function(newErrorText) {
-    if (this.props.hasOwnProperty('errorText')) {
+    if (process.NODE_ENV !== 'production' && this.props.hasOwnProperty('errorText')) {
       console.error('Cannot call TextField.setErrorText when errorText is defined as a property.');
     } else if (this.isMounted()) {
       this.setState({errorText: newErrorText});
@@ -163,7 +166,7 @@ var TextField = React.createClass({
   },
 
   setValue: function(newValue) {
-    if (this._isControlled()) {
+    if (process.NODE_ENV !== 'production' && this._isControlled()) {
       console.error('Cannot call TextField.setValue when value or valueLink is defined as a property.');
     } else if (this.isMounted()) {
       this._getInputNode().value = newValue;
@@ -189,6 +192,11 @@ var TextField = React.createClass({
   _handleInputFocus: function(e) {
     this.setState({isFocused: true});
     if (this.props.onFocus) this.props.onFocus(e);
+  },
+
+  _handleInputKeyDown: function(e) {
+    if (e.keyCode === 13 && this.props.onEnterKeyDown) this.props.onEnterKeyDown(e);
+    if (this.props.onKeyDown) this.props.onKeyDown(e);
   },
 
   _handleTextAreaHeightChange: function(e, height) {

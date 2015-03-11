@@ -20,10 +20,10 @@ var GetStarted = React.createClass({
           'module.exports = MyAwesomeReactComponent;\n\n\n',
 
       customizationCode = 
-        '@import "node_modules/material-ui/dist/less/scaffolding.less";\n\n' +
+        '@import "node_modules/material-ui/src/less/scaffolding.less";\n\n' +
         '//Define a custom less file to override\n//any variables defined in scaffolding.less\n' +
         '@import "my-custom-overrides.less";\n\n' +
-        '@import "node_modules/material-ui/dist/less/components.less";',
+        '@import "node_modules/material-ui/src/less/components.less";',
 
       usageNotesCode =
         'var injectTapEventPlugin = require("react-tap-event-plugin");\n\n' +
@@ -56,7 +56,7 @@ var GetStarted = React.createClass({
 
           <h3 className="mui-font-style-title">React-Tap-Event-Plugin</h3>
           <p>
-            Some components uses <a href="https://github.com/zilverline/react-tap-event-plugin">react-tap-event-plugin</a> to
+            Some components use <a href="https://github.com/zilverline/react-tap-event-plugin">react-tap-event-plugin</a> to
             listen for touch events. This dependency is temporary and will go away once react v1.0 is released. Until then, be
             sure to inject this plugin at the start of your app.
           </p>
