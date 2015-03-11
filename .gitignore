@@ -2,7 +2,7 @@ node_modules
 npm-debug.log
 build
 
-# Exclude compiled files
-lib
 icon-builder/js
 icon-builder/jsx
+# Don't exclude compiled files (motiz88)
+# lib
