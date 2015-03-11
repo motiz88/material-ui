@@ -1,8 +1,17 @@
 var React = require('react');
-var Classable = require('./mixins/classable.js');
-var EnhancedButton = require('./enhanced-button.jsx');
-var Icon = require('./icon.jsx');
-var Paper = require('./paper.jsx');
+var Classable = require('./mixins/classable');
+var EnhancedButton = require('./enhanced-button');
+var FontIcon = require('./font-icon');
+var Paper = require('./paper');
+
+var getZDepth = function(disabled) {
+  var zDepth = disabled ? 0 : 2;
+  return {
+    zDepth: zDepth,
+    initialZDepth: zDepth
+  };
+};
+
 
 var RaisedButton = React.createClass({
 
@@ -10,7 +19,7 @@ var RaisedButton = React.createClass({
 
   propTypes: {
     className: React.PropTypes.string,
-    icon: React.PropTypes.string.isRequired,
+    iconClassName: React.PropTypes.string,
     mini: React.PropTypes.bool,
     onMouseDown: React.PropTypes.func,
     onMouseUp: React.PropTypes.func,
@@ -20,13 +29,27 @@ var RaisedButton = React.createClass({
     secondary: React.PropTypes.bool
   },
 
-  getInitialState: function() {
-    var zDepth = this.props.disabled ? 0 : 2;
-    return {
-      zDepth: zDepth,
-      initialZDepth: zDepth
-    };
+  componentWillMount: function() {
+    this.setState(getZDepth(this.props.disabled));
   },
+
+  componentWillReceiveProps: function(newProps) {
+    if(newProps.disabled !== this.props.disabled){
+      this.setState(getZDepth(newProps.disabled));
+    }
+  },
+
+  componentDidMount: function() {
+    if (process.NODE_ENV !== 'production') {
+      if (this.props.iconClassName && this.props.children) {
+        var warning = 'You have set both an iconClassName and a child icon. ' +
+                      'It is recommended you use only one method when adding ' +
+                      'icons to FloatingActionButtons.';
+        console.warn(warning);
+      }
+    }
+  },
+
 
   render: function() {
     var {
@@ -39,6 +62,10 @@ var RaisedButton = React.createClass({
       'mui-is-secondary': secondary
     });
 
+    var icon;
+    if (this.props.iconClassName) icon = <FontIcon className={"mui-floating-action-button-icon " + this.props.iconClassName} />
+
+
     return (
       <Paper
         className={classes}
@@ -47,19 +74,18 @@ var RaisedButton = React.createClass({
         circle={true}>
 
         <EnhancedButton {...other}
-          className="mui-floating-action-button-container" 
+          className="mui-floating-action-button-container"
           onMouseDown={this._handleMouseDown}
           onMouseUp={this._handleMouseUp}
           onMouseOut={this._handleMouseOut}
           onTouchStart={this._handleTouchStart}
           onTouchEnd={this._handleTouchEnd}>
 
-          <Icon
-            className="mui-floating-action-button-icon"
-            icon={this.props.icon} />
+          {icon}
+          {this.props.children}
 
         </EnhancedButton>
-        
+
       </Paper>
     );
   },

@@ -1,8 +1,8 @@
 var React = require('react');
-var Paper = require('./paper.jsx');
-var Classable = require('./mixins/classable.js');
-var EnhancedSwitch = require('./enhanced-switch.jsx');
-var RadioButton = require('./radio-button.jsx');
+var Paper = require('./paper');
+var Classable = require('./mixins/classable');
+var EnhancedSwitch = require('./enhanced-switch');
+var RadioButton = require('./radio-button');
 
 var RadioButtonGroup = React.createClass({
 
@@ -12,6 +12,7 @@ var RadioButtonGroup = React.createClass({
 		name: React.PropTypes.string.isRequired,
     valueSelected: React.PropTypes.string,
     defaultSelected: React.PropTypes.string,
+    labelPosition: React.PropTypes.oneOf(['left', 'right']),
 		onChange: React.PropTypes.func
 	},
 
@@ -44,6 +45,7 @@ var RadioButtonGroup = React.createClass({
   },
 
 	render: function() {
+
     var options = this.props.children.map(function(option) {
       
       var {
@@ -61,6 +63,7 @@ var RadioButtonGroup = React.createClass({
         key={option.props.value}
         value={option.props.value}
         label={option.props.label}
+        labelPosition={this.props.labelPosition}
         onCheck={this._onChange}
         checked={option.props.value == this.state.selected}/>
 
@@ -76,10 +79,10 @@ var RadioButtonGroup = React.createClass({
   _updateRadioButtons: function(newSelection) {
     if (this.state.numberCheckedRadioButtons == 0) {
       this.setState({selected: newSelection});
-    } else {
-        var message = "Cannot select a different radio button while another radio button " + 
-                      "has the 'checked' property set to true.";
-        console.error(message);
+    } else if (process.NODE_ENV !== 'production') {
+      var message = "Cannot select a different radio button while another radio button " + 
+                    "has the 'checked' property set to true.";
+      console.error(message);
     }
   },
 

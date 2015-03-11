@@ -1,10 +1,10 @@
 var React = require('react');
-var Classable = require('../mixins/classable.js');
-var WindowListenable = require('../mixins/window-listenable.js');
-var DateTime = require('../utils/date-time.js');
-var KeyCode = require('../utils/key-code.js');
-var DatePickerDialog = require('./date-picker-dialog.jsx');
-var TextField = require('../text-field.jsx');
+var Classable = require('../mixins/classable');
+var WindowListenable = require('../mixins/window-listenable');
+var DateTime = require('../utils/date-time');
+var KeyCode = require('../utils/key-code');
+var DatePickerDialog = require('./date-picker-dialog');
+var TextField = require('../text-field');
 
 var DatePicker = React.createClass({
 
@@ -16,7 +16,9 @@ var DatePicker = React.createClass({
     mode: React.PropTypes.oneOf(['portrait', 'landscape', 'inline']),
     onFocus: React.PropTypes.func,
     onTouchTap: React.PropTypes.func,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onShow: React.PropTypes.func,
+    onDismiss: React.PropTypes.func,
   },
 
   windowListeners: {
@@ -42,6 +44,8 @@ var DatePicker = React.createClass({
       mode,
       onFocus,
       onTouchTap,
+      onShow,
+      onDismiss,
       ...other
     } = this.props;
     var classes = this.getClasses('mui-date-picker', {
@@ -65,7 +69,9 @@ var DatePicker = React.createClass({
         <DatePickerDialog
           ref="dialogWindow"
           initialDate={this.state.dialogDate}
-          onAccept={this._handleDialogAccept} />
+          onAccept={this._handleDialogAccept}
+          onShow={onShow}
+          onDismiss={onDismiss} />
       </div>
 
     );

@@ -1,11 +1,11 @@
 var React = require('react');
-var WindowListenable = require('./mixins/window-listenable.js');
-var CssEvent = require('./utils/css-event.js');
-var KeyCode = require('./utils/key-code.js');
+var WindowListenable = require('./mixins/window-listenable');
+var CssEvent = require('./utils/css-event');
+var KeyCode = require('./utils/key-code');
 var Classable = require('./mixins/classable');
-var FlatButton = require('./flat-button.jsx');
-var Overlay = require('./overlay.jsx');
-var Paper = require('./paper.jsx');
+var FlatButton = require('./flat-button');
+var Overlay = require('./overlay');
+var Paper = require('./paper');
 
 var DialogWindow = React.createClass({
 
@@ -78,7 +78,6 @@ var DialogWindow = React.createClass({
       //allow scrolling
       var body = document.getElementsByTagName('body')[0];
       body.style.overflow = '';
-      body.style.position = '';
     });
 
     this.setState({ open: false });
@@ -89,7 +88,6 @@ var DialogWindow = React.createClass({
     //prevent scrolling
     var body = document.getElementsByTagName('body')[0];
     body.style.overflow = 'hidden';
-    body.style.position = 'fixed';
 
     this.setState({ open: true });
     if (this.props.onShow) this.props.onShow();

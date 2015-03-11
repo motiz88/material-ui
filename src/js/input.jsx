@@ -1,8 +1,6 @@
-/** @jsx React.DOM */
-
-var React = require('react/addons');
-var Classable = require('./mixins/classable.js');
-var classSet = React.addons.classSet;
+var React = require('react');
+var Classable = require('./mixins/classable');
+var classSet = require('react-classset');
 
 var Input = React.createClass({
 
@@ -35,7 +33,9 @@ var Input = React.createClass({
   },
 
   componentDidMount: function() {
-    console.warn('Input has been deprecated. Please use TextField instead. See http://material-ui.com/#/components/text-fields');
+    if (process.NODE_ENV !== 'production') {
+      console.warn('Input has been deprecated. Please use TextField instead. See http://material-ui.com/#/components/text-fields');
+    }
   },
 
   render: function() {

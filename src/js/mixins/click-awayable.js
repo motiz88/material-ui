@@ -1,5 +1,5 @@
-var Events = require('../utils/events.js');
-var Dom = require('../utils/dom.js');
+var Events = require('../utils/events');
+var Dom = require('../utils/dom');
 
 module.exports = {
 
@@ -10,7 +10,7 @@ module.exports = {
   },
 
   componentWillUnmount: function() {
-    if (!this.manuallyBindClickAway) this._unbindClickAway();
+    this._unbindClickAway();
   },
 
   _checkClickAway: function(e) {

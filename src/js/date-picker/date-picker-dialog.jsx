@@ -1,10 +1,10 @@
 var React = require('react');
-var Classable = require('../mixins/classable.js');
-var WindowListenable = require('../mixins/window-listenable.js');
-var KeyCode = require('../utils/key-code.js');
-var Calendar = require('./calendar.jsx');
-var DialogWindow = require('../dialog-window.jsx');
-var FlatButton = require('../flat-button.jsx');
+var Classable = require('../mixins/classable');
+var WindowListenable = require('../mixins/window-listenable');
+var KeyCode = require('../utils/key-code');
+var Calendar = require('./calendar');
+var DialogWindow = require('../dialog-window');
+var FlatButton = require('../flat-button');
 
 var DatePickerDialog = React.createClass({
 
@@ -12,7 +12,9 @@ var DatePickerDialog = React.createClass({
 
   propTypes: {
     initialDate: React.PropTypes.object,
-    onAccept: React.PropTypes.func
+    onAccept: React.PropTypes.func,
+    onShow: React.PropTypes.func,
+    onDismiss: React.PropTypes.func,
   },
 
   windowListeners: {
@@ -85,12 +87,20 @@ var DatePickerDialog = React.createClass({
     this.setState({
       isCalendarActive: true
     });
+
+    if(this.props.onShow) {
+      this.props.onShow();
+    }
   },
 
   _handleDialogDismiss: function() {
     this.setState({
       isCalendarActive: false
     });
+
+    if(this.props.onDismiss) {
+      this.props.onDismiss();
+    }
   },
 
   _handleWindowKeyUp: function(e) {

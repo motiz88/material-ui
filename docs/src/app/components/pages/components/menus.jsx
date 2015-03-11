@@ -1,58 +1,58 @@
-var React = require('react'),
-  mui = require('mui'),
-  CodeExample = require('../../code-example/code-example.jsx'),
+var React = require('react');
+var mui = require('mui');
+var CodeExample = require('../../code-example/code-example.jsx');
 
-  labelMenuItems = [
-    { payload: '1', text: 'ID', data: '1234567890', icon: 'home' },
-    { payload: '2', text: 'Type', data: 'Announcement', icon: 'home' },
-    { payload: '3', text: 'Caller ID', data: '(123) 456-7890', icon: 'home' }
-  ],
+var labelMenuItems = [
+  { payload: '1', text: 'ID', data: '1234567890', icon: 'home' },
+  { payload: '2', text: 'Type', data: 'Announcement', icon: 'home' },
+  { payload: '3', text: 'Caller ID', data: '(123) 456-7890', icon: 'home' }
+];
 
-  numberMenuItems = [
-    { payload: '1', text: 'All', number: '22'},
-    { payload: '3', text: 'Uncategorized', number: '6'},
-    { payload: '4', text: 'Trash', number: '11' }
-  ],
+var numberMenuItems = [
+  { payload: '1', text: 'All', number: '22'},
+  { payload: '3', text: 'Uncategorized', number: '6'},
+  { payload: '4', text: 'Trash', number: '11' }
+];
 
-  iconMenuItems = [
-    { payload: '1', text: 'Live Answer', icon: 'communication_phone', number: '10' },
-    { payload: '2', text: 'Voicemail', icon: 'communication_voicemail',  number: '5' },
-    { payload: '3', text: 'Starred', icon: 'action_stars', number: '3' },
-    { payload: '4', text: 'Shared', icon: 'action_thumb_up',  number: '12' }
-  ],
+var iconMenuItems = [
+  { payload: '1', text: 'Live Answer', iconClassName: 'muidocs-icon-communication-phone', number: '10' },
+  { payload: '2', text: 'Voicemail', iconClassName: 'muidocs-icon-communication-voicemail',  number: '5' },
+  { payload: '3', text: 'Starred', iconClassName: 'muidocs-icon-action-stars', number: '3' },
+  { payload: '4', text: 'Shared', iconClassName: 'muidocs-icon-action-thumb-up',  number: '12' }
+];
 
-  filterMenuItems = [
-    { payload: '1', text: 'Text Opt-In', toggle: true},
-    { payload: '2', text: 'Text Opt-Out', toggle: true},
-    { payload: '3', text: 'Voice Opt-Out', toggle: true}
-  ],
+var filterMenuItems = [
+  { payload: '1', text: 'Text Opt-In', toggle: true},
+  { payload: '2', text: 'Text Opt-Out', toggle: true, defaultToggled: true},
+  { payload: '3', text: 'Voice Opt-Out', toggle: true, disabled: true}
+];
 
-  nestedMenuItems = [
-    { type: mui.MenuItem.Types.NESTED, text: 'Reports', items: [
-      { payload: '1', text: 'Nested Item 1' },
-      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [
-        { payload: '1', text: 'Nested Item 3' },
-        { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [
-          { payload: '1', text: 'Nested Item 5' },
-          { payload: '3', text: 'Nested Item 6' }
-        ] },
-        { payload: '3', text: 'Nested Item 7' }
+var nestedMenuItems = [
+  { type: mui.MenuItem.Types.NESTED, text: 'Reports', items: [
+    { payload: '1', text: 'Nested Item 1' },
+    { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [
+      { payload: '1', text: 'Nested Item 3' },
+      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [
+        { payload: '1', text: 'Nested Item 5' },
+        { payload: '3', text: 'Nested Item 6' }
       ] },
-      { payload: '3', text: 'Nested Item 9' },
-      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [
-        { payload: '1', text: 'Nested Item 3' },
-        { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [
-          { payload: '1', text: 'Nested Item 5' },
-          { payload: '3', text: 'Nested Item 6' }
-        ] },
-        { payload: '3', text: 'Nested Item 7' }
-      ] },
-      { payload: '4', text: 'Nested Item 10' }
+      { payload: '3', text: 'Nested Item 7' }
     ] },
-    { payload: '1', text: 'Audio Library'},
-    { payload: '2', text: 'Settings'},
-    { payload: '3', text: 'Logout'}
-  ];
+    { payload: '3', text: 'Nested Item 9' },
+    { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [
+      { payload: '1', text: 'Nested Item 3' },
+      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [
+        { payload: '1', text: 'Nested Item 5' },
+        { payload: '3', text: 'Nested Item 6' }
+      ] },
+      { payload: '3', text: 'Nested Item 7' }
+    ] },
+    { payload: '4', text: 'Nested Item 10' }
+  ] },
+  { payload: '1', text: 'Audio Library'},
+  { payload: '2', text: 'Settings'},
+  { payload: '3', text: 'Logout'}
+];
 
 
 var MenusPage = React.createClass({
@@ -84,7 +84,8 @@ var MenusPage = React.createClass({
       "   { payload: '1', text: 'ID', data: '1234567890', icon: 'home' },\n" +
       "   { payload: '2', text: 'Type', data: 'Announcement', icon: 'home' },\n" +
       "   { payload: '3', text: 'Caller ID', data: '(123) 456-7890', icon: 'home' }\n" +
-      "];\n\n"  +
+      "];\n\n" +
+      "//You can also pass an onItemTap or onItemClick callback prop.\n"
       "<Menu menuItems={labelMenuItems} />";
 
     return (
@@ -116,11 +117,12 @@ var MenusPage = React.createClass({
 
   _getIconMenuExample: function() {
     var code = 
+      "//iconClassName is the classname for our icon that will get passed into mui.FontIcon\n" +
       "iconMenuItems = [\n" +
-      "   { payload: '1', text: 'Live Answer', icon: 'communication_phone', number: '10' },\n" +
-      "   { payload: '2', text: 'Voicemail', icon: 'communication_voicemail',  number: '5' },\n" +
-      "   { payload: '3', text: 'Starred', icon: 'action_stars', number: '3' },\n" +
-      "   { payload: '4', text: 'Shared', icon: 'action_thumb_up',  number: '12' }\n" +
+      "   { payload: '1', text: 'Live Answer', iconClassName: 'muidocs-icon-communication-phone', number: '10' },\n" +
+      "   { payload: '2', text: 'Voicemail', iconClassName: 'muidocs-icon-communication-voicemail',  number: '5' },\n" +
+      "   { payload: '3', text: 'Starred', iconClassName: 'muidocs-icon-action-stars', number: '3' },\n" +
+      "   { payload: '4', text: 'Shared', iconClassName: 'muidocs-icon-action-thumb-up',  number: '12' }\n" +
       "];\n\n" +
       "<Menu menuItems={iconMenuItems} />";
 
@@ -134,11 +136,12 @@ var MenusPage = React.createClass({
   },
 
   _getFilterMenuExample: function() {
-    var code = 
+    var code =
+      "// Include toggle properties as keys so that they are passed into the toggle component\n" +
       "filterMenuItems = [\n" +
       "   { payload: '1', text: 'Text Opt-In', toggle: true},\n" +
-      "   { payload: '2', text: 'Text Opt-Out', toggle: true},\n" +
-      "   { payload: '3', text: 'Voice Opt-Out', toggle: true}\n" +
+      "   { payload: '2', text: 'Text Opt-Out', toggle: true, defaultToggled: true},\n" +
+      "   { payload: '3', text: 'Voice Opt-Out', toggle: true, disabled: true}\n" +
       "];\n\n" +
       "<Menu menuItems={filterMenuItems} />";
 
@@ -184,7 +187,7 @@ var MenusPage = React.createClass({
     return (
       <CodeExample code={code}>
         <div className="example-menu-nested">
-          <mui.Menu menuItems={nestedMenuItems} onItemClick={this._onItemClick} />
+          <mui.Menu menuItems={nestedMenuItems} onItemClick={this._onItemClick} onItemTap={this._onItemTap} />
         </div>
       </CodeExample>
     );
@@ -196,6 +199,10 @@ var MenusPage = React.createClass({
 
   _onItemClick: function(e, key, menuItem) {
     console.log("Menu Item Click: ", menuItem);
+  },
+
+  _onItemTap: function(e, key, menuItem) {
+    console.log("Menu Item Tap: ", menuItem);
   }
 
 });
