@@ -29,8 +29,9 @@
   },
   "homepage": "http://material-ui.com/",
   "dependencies": {
-    "react-draggable2": "git+https://github.com/motiz88/react-draggable",
-    "react-classset": "0.0.2"
+    "javascript-detect-element-resize": "git://github.com/sdecima/javascript-detect-element-resize",
+    "react-classset": "0.0.2",
+    "react-draggable2": "git+https://github.com/motiz88/react-draggable"
   },
   "peerDependencies": {
     "react": "0.12.x",
