@@ -223,7 +223,7 @@ var Menu = React.createClass({
       if (this.props.visible) {
 
         //Open the menu
-        el.style.height = this._initialMenuHeight + 'px';
+        el.style.height = 'initial';
 
         //Set the overflow to visible after the animation is done so
         //that other nested menus can be shown
