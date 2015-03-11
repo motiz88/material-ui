@@ -5,5 +5,5 @@ build
 # jsx Transform Disk Cache
 .module-cache
 
-# Exclude compiled files
-lib
+# Don't exclude compiled files (motiz88)
+# lib
