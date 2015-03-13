@@ -34,7 +34,7 @@
     "react-draggable2": "git+https://github.com/motiz88/react-draggable"
   },
   "peerDependencies": {
-    "react": "0.12.x",
+    "react": ">=0.12.x",
     "react-tap-event-plugin": "^0.1.3"
   },
   "devDependencies": {
