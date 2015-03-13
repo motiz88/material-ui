@@ -1,17 +1,16 @@
 var React = require('react');
 var Classable = require('./mixins/classable');
-var DomIdable = require('./mixins/dom-idable');
 var EnhancedTextarea = require('./enhanced-textarea');
 
 var TextField = React.createClass({
 
-  mixins: [Classable, DomIdable],
+  mixins: [Classable],
 
   propTypes: {
     errorText: React.PropTypes.string,
     floatingLabelText: React.PropTypes.string,
     hintText: React.PropTypes.string,
-    id: React.PropTypes.string,
+    id: React.PropTypes.string.isRequired,
     multiLine: React.PropTypes.bool,
     onBlur: React.PropTypes.func,
     onChange: React.PropTypes.func,
@@ -78,7 +77,7 @@ var TextField = React.createClass({
       'mui-is-multiLine': this.props.multiLine
     });
 
-    var inputId = this.props.id || this.getDomId();
+    var inputId = this.props.id;
 
     var errorTextElement = this.state.errorText ? (
       <div className="mui-text-field-error">{this.state.errorText}</div>
