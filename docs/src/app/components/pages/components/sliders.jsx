@@ -1,24 +1,71 @@
-var React = require('react');
-var mui = require('mui');
-var Slider = mui.Slider;
-var ComponentDoc = require('../../component-doc.jsx');
+let React = require('react');
+let { Slider } = require('material-ui');
+let ComponentDoc = require('../../component-doc');
 
-var SlidersPage = React.createClass({
 
-  render: function() {
+class SlidersPage extends React.Component {
 
-    var code =
+  handleMouseDown(e) {
+    console.log('hmd', e);
+  }
+
+  render() {
+
+    let code =
       '// Default\n' +
       '<Slider name="slider1" />\n\n' +
       '// With starting value\n' +
-      '<Slider name="slider2" defaultValue={0.5} />\n' +
+      '<Slider name="slider2" defaultValue={0.5} step={0.10} />\n' +
       '<Slider name="slider3" defaultValue={1} />\n\n' +
       '// Disabled with fixed value\n' +
       '<Slider name="slider1" disabled={true} />\n' +
       '<Slider name="slider2" disabled={true} value={0.5} />\n' +
       '<Slider name="slider3" disabled={true} value={1} />';
 
-    var componentInfo = [
+    let componentInfo = [
+      {
+        name: 'Props',
+        infoArray: [
+          {
+            name: 'max',
+            type: 'number',
+            header: 'default: 1',
+            desc: 'The maximum value the slider can slide to on a scale from ' +
+                  '0 to 1 inclusive.'
+          },
+          {
+            name: 'min',
+            type: 'number',
+            header: 'default: 0',
+            desc: 'The minimum value the slider can slide to on a scale from ' +
+                  '0 to 1 inclusive.'
+          },
+          {
+            name: 'step',
+            type: 'number',
+            header: 'default: 0.01',
+            desc: 'The granularity the slider can step through values.'
+          },
+          {
+            name: 'style',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of the Slider\'s root element.'
+          }
+        ]
+      },
+      {
+        name: 'Events',
+        infoArray: [
+          {
+            name: 'onChange',
+            type: 'function(e, value)',
+            header: 'optional',
+            desc: 'Callback function that is fired when the user changes the ' +
+                  'slider\'s value.'
+          }
+        ]
+      },
     ];
 
     return (
@@ -28,16 +75,16 @@ var SlidersPage = React.createClass({
         componentInfo={componentInfo}>
 
         <Slider name="slider1" />
-          <Slider name="slider2" value={0.5} />
-          <Slider name="slider3" value={1} />
-          <Slider name="slider1" disabled={true} />
-          <Slider name="slider2" disabled={true} value={0.5} />
-          <Slider name="slider3" disabled={true} value={1} />
+        <Slider name="slider2" value={0.5} step={0.10} />
+        <Slider name="slider3" value={1}/>
+        <Slider name="slider1" disabled={true} />
+        <Slider name="slider2" disabled={true} value={0.5} />
+        <Slider name="slider3" disabled={true} value={1} />
 
       </ComponentDoc>
     );
   }
 
-});
+}
 
 module.exports = SlidersPage;

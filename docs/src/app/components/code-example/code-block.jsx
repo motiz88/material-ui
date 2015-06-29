@@ -1,24 +1,46 @@
-var React = require('react'),
-  hljs = require('highlight.js');
+let React = require('react');
+let hljs = require('highlight.js');
+let { Styles } = require('material-ui');
+let { Spacing } = Styles;
 
-var CodeBlock = React.createClass({
 
-  componentDidMount: function() {
-    hljs.highlightBlock(this.getDOMNode());
-  },
+class CodeBlock extends React.Component {
 
-  componentDidUpdate: function(prevProps, prevState) {
-    hljs.highlightBlock(this.getDOMNode());
-  },
+  constructor() {
+    super();
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+  }
 
-  render: function() {
+  componentDidMount() {
+    hljs.highlightBlock(React.findDOMNode(this));
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    hljs.highlightBlock(React.findDOMNode(this));
+  }
+
+  getStyles() {
+    let borderColor = this.context.muiTheme.palette.borderColor;
+    return {
+      padding: Spacing.desktopGutter,
+      margin: '0',
+      borderRadius: '0 0 2px 2px',
+      borderTop: 'solid 1px ' + borderColor
+    };
+  }
+
+  render() {
     return (
-      <pre className="code-block">
+      <pre style={this.getStyles()}>
         <code>{this.props.children}</code>
       </pre>
     );
   }
+}
 
-});
+CodeBlock.contextTypes = {
+  muiTheme: React.PropTypes.object
+}
 
 module.exports = CodeBlock;

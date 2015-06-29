@@ -13,22 +13,29 @@ var gulp         = require('gulp');
 var handleErrors = require('../util/handleErrors');
 var source       = require('vinyl-source-stream');
 var config       = require('../config').browserify;
+var buffer       = require('vinyl-buffer');
+var sourcemaps   = require('gulp-sourcemaps');
+var babelify     = require('babelify');
 
-gulp.task('browserify', function(callback) {
+gulp.task('browserify', ['eslint'], function(callback) {
 
   var bundleQueue = config.bundleConfigs.length;
 
   var browserifyThis = function(bundleConfig) {
 
     var bundler = browserify({
+
       // Required watchify args
       cache: {}, packageCache: {}, fullPaths: false,
       // Specify the entry point of your app
       entries: bundleConfig.entries,
       // Add file extentions to make optional in your requires
       extensions: config.extensions,
-      // Enable source maps!
-      debug: config.debug
+      // Enable source maps, since they are only loaded on demand there is no need to disable
+      debug: true,
+      // Material-UI Source path
+      paths: ['../src']
+
     });
 
     var bundle = function() {
@@ -43,12 +50,19 @@ gulp.task('browserify', function(callback) {
         // stream gulp compatible. Specifiy the
         // desired output filename here.
         .pipe(source(bundleConfig.outputName))
+        .pipe(buffer())
+        // Create independent source map file in the build directory
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.write('./'))
         // Specify the output destination
         .pipe(gulp.dest(bundleConfig.dest))
         .on('end', reportFinished);
     };
 
-    if(global.isWatching) {
+    bundler.require('../src/index.js', {expose: 'material-ui'});
+    bundler.transform(babelify.configure({stage: 1}));
+
+    if (global.isWatching) {
       // Wrap with watchify and rebundle on changes
       bundler = watchify(bundler);
       // Rebundle on update
@@ -59,9 +73,9 @@ gulp.task('browserify', function(callback) {
       // Log when bundling completes
       bundleLogger.end(bundleConfig.outputName);
 
-      if(bundleQueue) {
+      if (bundleQueue) {
         bundleQueue--;
-        if(bundleQueue === 0) {
+        if (bundleQueue === 0) {
           // If queue is empty, tell gulp the task is complete.
           // https://github.com/gulpjs/gulp/blob/master/docs/API.md#accept-a-callback
           callback();

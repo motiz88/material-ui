@@ -1,16 +1,50 @@
 /** In this file, we create a React component which incorporates components provided by material-ui */
 
-var React = require('react'),
-  mui = require('material-ui'),
-  RaisedButton = mui.RaisedButton;
+let React = require('react');
+let mui = require('material-ui');
+let RaisedButton = mui.RaisedButton;
+let Dialog = mui.Dialog
+let ThemeManager = new mui.Styles.ThemeManager();
+let Colors = mui.Styles.Colors;
 
-var Main = React.createClass({
+let Main = React.createClass({
 
-  render: function() {
+  childContextTypes: {
+    muiTheme: React.PropTypes.object
+  },
+
+  getChildContext() {
+    return {
+      muiTheme: ThemeManager.getCurrentTheme()
+    };
+  },
+
+  componentWillMount() {
+    ThemeManager.setPalette({
+      accent1Color: Colors.deepOrange500
+    });
+  },
+
+  render() {
+
+    let containerStyle = {
+      textAlign: 'center',
+      paddingTop: '200px'
+    };
+
+    let standardActions = [
+      { text: 'Okay' }
+    ];
 
     return (
-      <div className="example-page">
-
+      <div style={containerStyle}>
+        <Dialog
+          title="Super Secret Password"
+          actions={standardActions}
+          ref="superSecretPasswordDialog">
+          1-2-3-4-5
+        </Dialog>
+        
         <h1>material-ui</h1>
         <h2>example project</h2>
 
@@ -20,10 +54,10 @@ var Main = React.createClass({
     );
   },
 
-  _handleTouchTap: function() {
-    alert('1-2-3-4-5');
+  _handleTouchTap() {
+    this.refs.superSecretPasswordDialog.show();
   }
-  
+
 });
 
 module.exports = Main;

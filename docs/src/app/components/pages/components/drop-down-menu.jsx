@@ -1,13 +1,13 @@
-var React = require('react');
-var mui = require('mui');
-var DropDownMenu = mui.DropDownMenu;
-var ComponentDoc = require('../../component-doc.jsx');
+let React = require('react');
+let { DropDownMenu } = require('material-ui');
+let ComponentDoc = require('../../component-doc');
 
-var DropDownMenuPage = React.createClass({
 
-  render: function() {
+class DropDownMenuPage extends React.Component {
 
-    var menuItems = [
+  render() {
+
+    let menuItems = [
       { payload: '1', text: 'Never' },
       { payload: '2', text: 'Every Night' },
       { payload: '3', text: 'Weeknights' },
@@ -15,8 +15,8 @@ var DropDownMenuPage = React.createClass({
       { payload: '5', text: 'Weekly' },
     ];
 
-    var code = 
-      "var menuItems = [\n" +
+    let code =
+      "let menuItems = [\n" +
       "   { payload: '1', text: 'Never' },\n" +
       "   { payload: '2', text: 'Every Night' },\n" +
       "   { payload: '3', text: 'Weeknights' },\n" +
@@ -25,7 +25,7 @@ var DropDownMenuPage = React.createClass({
       "];\n\n" +
       "<DropDownMenu menuItems={menuItems} />";
 
-    var componentInfo = [
+    let componentInfo = [
       {
         name: 'Props',
         infoArray: [
@@ -42,6 +42,25 @@ var DropDownMenuPage = React.createClass({
             type: 'array',
             header: 'required',
             desc: 'JSON data representing all menu items in the dropdown.'
+          },
+          {
+            name: 'menuItemStyle',
+            type: 'array',
+            header: 'required',
+            desc: 'Overrides the inline-styles of the MenuItems when the ' +
+                  'DropDownMenu is expanded.'
+          },
+          {
+            name: 'selectedIndex',
+            type: 'number',
+            header: 'default: 0',
+            desc: 'Index of the item selected.'
+          },
+          {
+            name: 'style',
+            type: 'object',
+            header: 'optional',
+            desc: 'Overrides the inline-styles of DropDownMenu\'s root element.'
           }
         ]
       },
@@ -70,6 +89,6 @@ var DropDownMenuPage = React.createClass({
     );
   }
 
-});
+}
 
 module.exports = DropDownMenuPage;

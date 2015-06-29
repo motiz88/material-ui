@@ -1,210 +1,310 @@
-var React = require('react');
-var mui = require('mui');
-var CodeExample = require('../../code-example/code-example.jsx');
+let React = require('react');
+let Menu = require('menus/menu');
+let MenuItem = require('menus/menu-item');
+let MenuDivider = require('menus/menu-divider');
+let ComponentDoc = require('../../component-doc');
 
-var labelMenuItems = [
-  { payload: '1', text: 'ID', data: '1234567890', icon: 'home' },
-  { payload: '2', text: 'Type', data: 'Announcement', icon: 'home' },
-  { payload: '3', text: 'Caller ID', data: '(123) 456-7890', icon: 'home' }
-];
+let ArrowDropRight = require('svg-icons/navigation-arrow-drop-right');
+let ContentCopy = require('svg-icons/content/content-copy');
+let ContentLink = require('svg-icons/content/link');
+let Delete = require('svg-icons/action/delete');
+let Download = require('svg-icons/file/file-download');
+let PersonAdd = require('svg-icons/social/person-add');
+let RemoveRedEye = require('svg-icons/image/remove-red-eye');
 
-var numberMenuItems = [
-  { payload: '1', text: 'All', number: '22'},
-  { payload: '3', text: 'Uncategorized', number: '6'},
-  { payload: '4', text: 'Trash', number: '11' }
-];
+class MenusPage extends React.Component {
 
-var iconMenuItems = [
-  { payload: '1', text: 'Live Answer', iconClassName: 'muidocs-icon-communication-phone', number: '10' },
-  { payload: '2', text: 'Voicemail', iconClassName: 'muidocs-icon-communication-voicemail',  number: '5' },
-  { payload: '3', text: 'Starred', iconClassName: 'muidocs-icon-action-stars', number: '3' },
-  { payload: '4', text: 'Shared', iconClassName: 'muidocs-icon-action-thumb-up',  number: '12' }
-];
+  render() {
 
-var filterMenuItems = [
-  { payload: '1', text: 'Text Opt-In', toggle: true},
-  { payload: '2', text: 'Text Opt-Out', toggle: true, defaultToggled: true},
-  { payload: '3', text: 'Voice Opt-Out', toggle: true, disabled: true}
-];
+    let code = `
+    <Menu>
+      <MenuItem>Maps</MenuItem>
+      <MenuItem>Books</MenuItem>
+      <MenuItem>Flights</MenuItem>
+      <MenuItem>Apps</MenuItem>
+    </Menu>
 
-var nestedMenuItems = [
-  { type: mui.MenuItem.Types.NESTED, text: 'Reports', items: [
-    { payload: '1', text: 'Nested Item 1' },
-    { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [
-      { payload: '1', text: 'Nested Item 3' },
-      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [
-        { payload: '1', text: 'Nested Item 5' },
-        { payload: '3', text: 'Nested Item 6' }
-      ] },
-      { payload: '3', text: 'Nested Item 7' }
-    ] },
-    { payload: '3', text: 'Nested Item 9' },
-    { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [
-      { payload: '1', text: 'Nested Item 3' },
-      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [
-        { payload: '1', text: 'Nested Item 5' },
-        { payload: '3', text: 'Nested Item 6' }
-      ] },
-      { payload: '3', text: 'Nested Item 7' }
-    ] },
-    { payload: '4', text: 'Nested Item 10' }
-  ] },
-  { payload: '1', text: 'Audio Library'},
-  { payload: '2', text: 'Settings'},
-  { payload: '3', text: 'Logout'}
-];
+    <Menu desktop={true} width={320}>
+      <MenuItem secondaryText="&#8984;B">Bold</MenuItem>
+      <MenuItem secondaryText="&#8984;I">Italic</MenuItem>
+      <MenuItem secondaryText="&#8984;U">Underline</MenuItem>
+      <MenuItem secondaryText="Alt+Shift+5">Strikethrough</MenuItem>
+      <MenuItem secondaryText="&#8984;.">Superscript</MenuItem>
+      <MenuItem secondaryText="&#8984;,">Subscript</MenuItem>
+      <MenuDivider />
+      <MenuItem rightIcon={<ArrowDropRight />}>Paragraph styles</MenuItem>
+      <MenuItem rightIcon={<ArrowDropRight />}>Align</MenuItem>
+      <MenuItem rightIcon={<ArrowDropRight />}>Line spacing</MenuItem>
+      <MenuItem rightIcon={<ArrowDropRight />}>Numbered list</MenuItem>
+      <MenuItem rightIcon={<ArrowDropRight />}>List options</MenuItem>
+      <MenuDivider />
+      <MenuItem secondaryText="&#8984;/">Clear formatting</MenuItem>
+    </Menu>
+    `;
 
+    let desc = null;
 
-var MenusPage = React.createClass({
+    let componentInfo = [
+      {
+        name: 'Menu Props',
+        infoArray: [
+          {
+            name: 'desktop',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'Indicates if the menu should render with compact desktop styles.'
+          },
+          {
+            name: 'multiple',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'If true, the value can an array and allow the menu to be a multi-select.'
+          },
+          {
+            name: 'open',
+            type: 'bool',
+            header: 'default: true',
+            desc: 'If true, the menu will be rendered open.'
+          },
+          {
+            name: 'openDirection',
+            type: 'oneOf [bottom-left, bottom-right, top-left, top-right]',
+            header: 'default: bottom-left',
+            desc: 'This is the placement of the menu relative to the IconButton.'
+          },
+          {
+            name: 'listStyle',
+            type: 'object',
+            header: 'optional',
+            desc: 'The style object to use to override underlying list style.'
+          },
+          {
+            name: 'value',
+            type: 'string or array',
+            header: 'optional',
+            desc: 'The value of the selected menu item. If passed in, this will make the menu ' +
+              'a controlled component. This component also supports valueLink.'
+          },
+          {
+            name: 'width',
+            type: 'string or number',
+            header: 'optional',
+            desc: 'Sets the width of the menu. If not specified, the menu width will be dictated by its ' +
+              'children. The rendered width will always be a keyline increment (64px for desktop, 56px otherwise).'
+          }
+        ]
+      },
+      {
+        name: 'MenuItem Props',
+        infoArray: [
+          {
+            name: 'checked',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'If true, a left check mark will be rendered'
+          },
+          {
+            name: 'desktop',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'Indicates if the menu should render with compact desktop styles.'
+          },
+          {
+            name: 'disabled',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'Disables a menu item.'
+          },
+          {
+            name: 'innerDivStyle',
+            type: 'object',
+            header: 'optional',
+            desc: 'Style overrides for the inner div.'
+          },
+          {
+            name: 'insetChildren',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'If true, the children will be indented. Only needed when there is no leftIcon.'
+          },
+          {
+            name: 'leftIcon',
+            type: 'element',
+            header: 'optional',
+            desc: 'This is the SvgIcon or FontIcon to be displayed on the left side.'
+          },
+          {
+            name: 'rightIcon',
+            type: 'element',
+            header: 'optional',
+            desc: 'This is the SvgIcon or FontIcon to be displayed on the right side.'
+          },
+          {
+            name: 'secondaryText',
+            type: 'node',
+            header: 'optional',
+            desc: 'This is the block element that contains the secondary text. If a string is passed in, a ' +
+              'div tag will be rendered.'
+          },
+          {
+            name: 'value',
+            type: 'string',
+            header: 'optional',
+            desc: 'The value of the menu item.'
+          }
+        ]
+      },
+      {
+        name: 'Events',
+        infoArray: [
+          {
+            name: 'onItemTouchTap',
+            header: 'function(e, item)',
+            desc: 'Fired when a menu item is touchTapped.'
+          },
+          {
+            name: 'onChange',
+            header: 'function(e, value)',
+            desc: 'Fired when a menu item is touchTapped and the menu item value ' +
+              'is not equal to the current menu value.'
+          }
+        ]
+      }
+    ];
 
-  render: function() {
+    let styles = {
+      menu: {
+        marginRight: 32,
+        marginBottom: 32,
+        float: 'left',
+        position: 'relative',
+        zIndex: 0
+      },
+
+      hr: {
+        clear: 'both',
+        border: 'none'
+      }
+    };
+
     return (
-      <div>
-        <h2 className="mui-font-style-headline">Label Menu</h2>
-        {this._getLabelMenuExample()}
+      <ComponentDoc
+        name="Menus"
+        code={code}
+        desc={desc}
+        componentInfo={componentInfo}>
 
-        <h2 className="mui-font-style-headline">Number Menu</h2>
-        {this._getNumberMenuExample()}
+        <Menu style={styles.menu}>
+          <MenuItem>Maps</MenuItem>
+          <MenuItem>Books</MenuItem>
+          <MenuItem>Flights</MenuItem>
+          <MenuItem>Apps</MenuItem>
+        </Menu>
 
-        <h2 className="mui-font-style-headline">Icon Menu</h2>
-        {this._getIconMenuExample()}
+        <Menu style={styles.menu}>
+          <MenuItem>Refresh</MenuItem>
+          <MenuItem>Help &amp; feedback</MenuItem>
+          <MenuItem>Settings</MenuItem>
+          <MenuItem>Sign out</MenuItem>
+        </Menu>
 
-        <h2 className="mui-font-style-headline">Filter Menu</h2>
-        {this._getFilterMenuExample()}
+        <Menu style={styles.menu} desktop={true}>
+          <MenuItem>Home</MenuItem>
+          <MenuItem>Back</MenuItem>
+          <MenuItem disabled={true}>Forward</MenuItem>
+          <MenuDivider />
+          <MenuItem disabled={true}>Recently closed</MenuItem>
+          <MenuItem disabled={true}>Google</MenuItem>
+          <MenuItem>YouTube</MenuItem>
+        </Menu>
 
-        <h2 className="mui-font-style-headline">Nested Menu</h2>
-        {this._getNestedMenuExample()}
-      </div>
+        <Menu style={styles.menu}>
+          <MenuItem leftIcon={<RemoveRedEye />}>Preview</MenuItem>
+          <MenuItem leftIcon={<PersonAdd />}>Share</MenuItem>
+          <MenuItem leftIcon={<ContentLink />}>Get link</MenuItem>
+          <MenuDivider />
+          <MenuItem leftIcon={<ContentCopy />}>Make a copy</MenuItem>
+          <MenuItem leftIcon={<Download />}>Download</MenuItem>
+          <MenuDivider />
+          <MenuItem leftIcon={<Delete />}>Remove</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true}>
+          <MenuItem>Undo</MenuItem>
+          <MenuItem disabled={true}>Redo</MenuItem>
+          <MenuDivider />
+          <MenuItem disabled={true}>Cut</MenuItem>
+          <MenuItem disabled={true}>Copy</MenuItem>
+          <MenuItem>Paste</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true}>
+          <MenuItem>Untitled</MenuItem>
+          <MenuItem>Using the z-axis to Solve Design Challenges</MenuItem>
+          <MenuItem>An Extensive History of Dimensionality</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true}>
+          <MenuItem>Untitled</MenuItem>
+          <MenuItem>Using the z-axis to Solve Design Challenges</MenuItem>
+          <MenuItem>An Extensive History of Dimensionality: the Abridged Edition</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true} width={320}>
+          <MenuItem secondaryText="Cmnd + O">Open</MenuItem>
+          <MenuItem secondaryText="Shift + V">Paste in place</MenuItem>
+          <MenuItem secondaryText="Opt + Shift + Cmnd + I">Research</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true} width={320}>
+          <MenuItem secondaryText="&#8984;O">Open</MenuItem>
+          <MenuItem secondaryText="&#8679;&#8984;V">Paste in place</MenuItem>
+          <MenuItem secondaryText="&#8997;&#8679;&#8984;I">Research</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true} width={320}>
+          <MenuItem secondaryText="&#8984;B">Bold</MenuItem>
+          <MenuItem secondaryText="&#8984;I">Italic</MenuItem>
+          <MenuItem secondaryText="&#8984;U">Underline</MenuItem>
+          <MenuItem secondaryText="Alt+Shift+5">Strikethrough</MenuItem>
+          <MenuItem secondaryText="&#8984;.">Superscript</MenuItem>
+          <MenuItem secondaryText="&#8984;,">Subscript</MenuItem>
+          <MenuDivider />
+          <MenuItem rightIcon={<ArrowDropRight />}>Paragraph styles</MenuItem>
+          <MenuItem rightIcon={<ArrowDropRight />}>Align</MenuItem>
+          <MenuItem rightIcon={<ArrowDropRight />}>Line spacing</MenuItem>
+          <MenuItem rightIcon={<ArrowDropRight />}>Numbered list</MenuItem>
+          <MenuItem rightIcon={<ArrowDropRight />}>List options</MenuItem>
+          <MenuDivider />
+          <MenuItem secondaryText="&#8984;/">Clear formatting</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true} width={320}>
+          <MenuItem insetChildren={true}>Single</MenuItem>
+          <MenuItem insetChildren={true}>1.15</MenuItem>
+          <MenuItem insetChildren={true}>Double</MenuItem>
+          <MenuItem checked={true} rightIcon={<ArrowDropRight />}>Custom: 1.2</MenuItem>
+          <MenuItem secondaryText="&#8984;.">Superscript</MenuItem>
+          <MenuItem secondaryText="&#8984;,">Subscript</MenuItem>
+          <MenuDivider />
+          <MenuItem>Add space before paragraph</MenuItem>
+          <MenuItem>Add space after paragraph</MenuItem>
+          <MenuDivider />
+          <MenuItem>Custom spacing...</MenuItem>
+        </Menu>
+
+        <Menu style={styles.menu} desktop={true}>
+          <MenuItem>Show</MenuItem>
+          <MenuItem checked={true}>Grid lines</MenuItem>
+          <MenuItem insetChildren={true}>Page breaks</MenuItem>
+          <MenuItem checked={true}>Rules</MenuItem>
+        </Menu>
+
+      </ComponentDoc>
     );
-  },
 
-  _getLabelMenuExample: function() {
-    var code = 
-      "var labelMenuItems = [\n" +
-      "   { payload: '1', text: 'ID', data: '1234567890', icon: 'home' },\n" +
-      "   { payload: '2', text: 'Type', data: 'Announcement', icon: 'home' },\n" +
-      "   { payload: '3', text: 'Caller ID', data: '(123) 456-7890', icon: 'home' }\n" +
-      "];\n\n" +
-      "//You can also pass an onItemTap or onItemClick callback prop.\n"
-      "<Menu menuItems={labelMenuItems} />";
-
-    return (
-      <CodeExample code={code}>
-        <div className="example-menu">
-          <mui.Menu menuItems={labelMenuItems} onItemClick={this._onItemClick} />
-        </div>
-      </CodeExample>
-    );
-  },
-
-  _getNumberMenuExample: function() {
-    var code = 
-      "var numberMenuItems = [\n" +
-      "   { payload: '1', text: 'All', number: '22' },\n" +
-      "   { payload: '3', text: 'Uncategorized', number: '6'},\n" +
-      "   { payload: '4', text: 'Trash', number: '11' }\n" +
-      "];\n\n"  +
-      "<Menu menuItems={numberMenuItems} />";
-
-    return (
-      <CodeExample code={code}>
-        <div className="example-menu">
-          <mui.Menu menuItems={numberMenuItems} onItemClick={this._onItemClick} />
-        </div>
-      </CodeExample>
-    );
-  },
-
-  _getIconMenuExample: function() {
-    var code = 
-      "//iconClassName is the classname for our icon that will get passed into mui.FontIcon\n" +
-      "iconMenuItems = [\n" +
-      "   { payload: '1', text: 'Live Answer', iconClassName: 'muidocs-icon-communication-phone', number: '10' },\n" +
-      "   { payload: '2', text: 'Voicemail', iconClassName: 'muidocs-icon-communication-voicemail',  number: '5' },\n" +
-      "   { payload: '3', text: 'Starred', iconClassName: 'muidocs-icon-action-stars', number: '3' },\n" +
-      "   { payload: '4', text: 'Shared', iconClassName: 'muidocs-icon-action-thumb-up',  number: '12' }\n" +
-      "];\n\n" +
-      "<Menu menuItems={iconMenuItems} />";
-
-    return (
-      <CodeExample code={code}>
-        <div className="example-menu">
-          <mui.Menu menuItems={iconMenuItems} onItemClick={this._onItemClick} />
-        </div>
-      </CodeExample>
-    );
-  },
-
-  _getFilterMenuExample: function() {
-    var code =
-      "// Include toggle properties as keys so that they are passed into the toggle component\n" +
-      "filterMenuItems = [\n" +
-      "   { payload: '1', text: 'Text Opt-In', toggle: true},\n" +
-      "   { payload: '2', text: 'Text Opt-Out', toggle: true, defaultToggled: true},\n" +
-      "   { payload: '3', text: 'Voice Opt-Out', toggle: true, disabled: true}\n" +
-      "];\n\n" +
-      "<Menu menuItems={filterMenuItems} />";
-
-    return (
-      <CodeExample code={code}>
-        <div className="example-menu">
-          <mui.Menu menuItems={filterMenuItems} onItemToggle={this._onFilterMenuToggle}  onItemClick={this._onItemClick} />
-        </div>
-      </CodeExample>
-    );
-  },
-
-  _getNestedMenuExample: function() {
-    var code = 
-      "nestedMenuItems = [\n" +
-      "    { type: mui.MenuItem.Types.NESTED, text: 'Reports', items: [\n" +
-      "      { payload: '1', text: 'Nested Item 1' },\n" +
-      "      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [\n" +
-      "        { payload: '1', text: 'Nested Item 3' },\n" +
-      "        { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [\n" +
-      "          { payload: '1', text: 'Nested Item 5' },\n" +
-      "          { payload: '3', text: 'Nested Item 6' }\n" +
-      "        ] },\n" +
-      "        { payload: '3', text: 'Nested Item 7' }\n" +
-      "      ] },\n" +
-      "      { payload: '3', text: 'Nested Item 9' },\n" +
-      "      { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 2', items: [\n" +
-      "        { payload: '1', text: 'Nested Item 3' },\n" +
-      "       { type: mui.MenuItem.Types.NESTED, text: 'Nested Item 4', items: [\n" +
-      "          { payload: '1', text: 'Nested Item 5' },\n" +
-      "          { payload: '3', text: 'Nested Item 6' }\n" +
-      "        ] },\n" +
-      "        { payload: '3', text: 'Nested Item 7' }\n" +
-      "      ] },\n" +
-      "      { payload: '4', text: 'Nested Item 10' }\n" +
-      "    ] },\n" +
-      "    { payload: '1', text: 'Audio Library'},\n" +
-      "    { payload: '2', text: 'Settings'},\n" +
-      "    { payload: '3', text: 'Logout'}\n" +
-      "  ];\n\n" +
-      '<Menu menuItems={nestedMenuItems} />';
-
-    return (
-      <CodeExample code={code}>
-        <div className="example-menu-nested">
-          <mui.Menu menuItems={nestedMenuItems} onItemClick={this._onItemClick} onItemTap={this._onItemTap} />
-        </div>
-      </CodeExample>
-    );
-  },
-
-  _onFilterMenuToggle: function(e, key, menuItem, toggled) {
-    console.log('Filter Menu Toggled: ', key, menuItem, toggled)
-  },
-
-  _onItemClick: function(e, key, menuItem) {
-    console.log("Menu Item Click: ", menuItem);
-  },
-
-  _onItemTap: function(e, key, menuItem) {
-    console.log("Menu Item Tap: ", menuItem);
   }
 
-});
+}
 
 module.exports = MenusPage;

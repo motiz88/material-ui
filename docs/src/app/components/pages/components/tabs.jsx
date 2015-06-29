@@ -1,21 +1,37 @@
-var React = require('react');
-var CodeExample = require('../../code-example/code-example.jsx');
-var mui = require('mui');
-var Router = require('react-router');
-var ComponentDoc = require('../../component-doc.jsx');
-var RouteHandler = Router.RouteHandler;
-var Tabs = mui.Tabs;
-var Tab= mui.Tab;
+let React = require('react');
+let CodeExample = require('../../code-example/code-example');
+let { Slider, Styles, Tab, Tabs } = require('material-ui');
+let ComponentDoc = require('../../component-doc');
 
-var TabsPage = React.createClass({
+let { Typography } = Styles;
 
-  mixins: [Router.Navigation, Router.State],
 
-  render: function(){
-    var code =  '<Tabs> \n' +
+class TabsPage extends React.Component {
+
+  constructor() {
+    super();
+    this._onActive = this._onActive.bind(this);
+  }
+
+  getStyles() {
+    return {
+      headline: {
+        fontSize: '24px',
+        lineHeight: '32px',
+        paddingTop: '16px',
+        marginBottom: '12px',
+        letterSpacing: '0',
+        fontWeight: Typography.fontWeightNormal,
+        color: Typography.textDarkBlack
+      }
+    }
+  }
+
+  render(){
+    let code =  '<Tabs> \n' +
                 '  <Tab label="Item One" > \n' +
-                '    <div className="tab-template-container"> \n' +
-                '      <h2 className="mui-font-style-headline">Tab One Template Example</h2> \n' +
+                '    <div> \n' +
+                '      <h2 style={this.getStyles().headline}>Tab One Template Example</h2> \n' +
                 '      <p> \n' +
                 '        This is an example of a tab template! \n' +
                 '      </p> \n' +
@@ -25,8 +41,8 @@ var TabsPage = React.createClass({
                 '    </div> \n' +
                 '  </Tab> \n' +
                 '  <Tab label="Item Two" > \n' +
-                '    <div className="tab-template-container"> \n' +
-                '      <h2 className="mui-font-style-headline">Tab Two Template Example</h2> \n' +
+                '    <div> \n' +
+                '      <h2 style={this.getStyles().headline}>Tab Two Template Example</h2> \n' +
                 '      <p> \n' +
                 '        This is another example of a tab template! \n' +
                 '      </p> \n' +
@@ -41,22 +57,44 @@ var TabsPage = React.createClass({
                 '    onActive={this._onActive} /> \n' +
                 '</Tabs> \n' +
                 '\n' +
-                '_onActive: function(tab){ \n' +
-                '  this.transitionTo(tab.props.route); \n' +
+                '_onActive(tab){ \n' +
+                '  this.context.router.transitionTo(tab.props.route); \n' +
                 '}';
 
-    var desc = 'Refs cannont be set on individual Tab components as cloneWithProps is being ' +
+    let desc = 'Refs cannot be set on individual Tab components as cloneWithProps is being ' +
       'used to extend the individual tab components under the hood. However, ' +
       'refs can be passed to the Tabs container and to any element or component within the template. ' +
       'If you need to access a tab directly - you can do so with the first argument of onActive or ' +
       'by accessing the props.children array by passing refs to the Tabs container.';
 
-
-
-    var componentInfo = [
+    let componentInfo = [
       {
         name: 'Tabs Props',
         infoArray: [
+          {
+            name: 'initialSelectedIndex',
+            type: 'number',
+            header: 'optional',
+            desc: 'Specify initial visible tab index. Initial selected index is set by default to 0. If initialSelectedIndex is set but larger than the total amount of specified tabs, initialSelectedIndex will revert back to default'
+          },
+          {
+            name: 'style',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of the Tabs\' root element.'
+          },
+          {
+            name: 'tabItemContainerStyle',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of the tab-labels container.'
+          },
+          {
+            name: 'contentContainerStyle',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of the content\'s container.'
+          },
           {
             name: 'tabWidth',
             type: 'number',
@@ -113,22 +151,23 @@ var TabsPage = React.createClass({
         desc={desc}
         componentInfo={componentInfo}>
 
-        <div className='tabs-examples'>
+        <div>
           <Tabs onChange={this._onChange}>
             <Tab label='Item One' >
-              <div className='tab-template-container'>
-                <h2 className='mui-font-style-headline'>Tab One Template Example</h2>
+              <div>
+                <h2 style={this.getStyles().headline}>Tab One Template Example</h2>
                 <p>
                   This is an example of a tab template!
                 </p>
                 <p>
-                  You can put any sort of HTML or react component in here.
+                  You can put any sort of HTML or react component in here. It even keeps the component state!
                 </p>
+                <Slider name="slider0" defaultValue={0.5} />
               </div>
             </Tab>
             <Tab label='Item Two' >
-              <div className='tab-template-container'>
-                <h2 className='mui-font-style-headline'>Tab Two Template Example</h2>
+              <div>
+                <h2 style={this.getStyles().headline}>Tab Two Template Example</h2>
                 <p>
                   This is another example of a tab template!
                 </p>
@@ -146,11 +185,15 @@ var TabsPage = React.createClass({
 
       </ComponentDoc>
     );
-  },
-
-  _onActive: function(tab){
-    this.transitionTo(tab.props.route);
   }
-});
+
+  _onActive(tab){
+    this.context.router.transitionTo(tab.props.route);
+  }
+}
+
+TabsPage.contextTypes = {
+  router: React.PropTypes.func
+};
 
 module.exports = TabsPage;

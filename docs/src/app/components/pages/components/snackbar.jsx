@@ -1,24 +1,28 @@
-var React = require('react');
-var mui = require('mui');
-var RaisedButton = mui.RaisedButton;
-var Snackbar = mui.Snackbar;
-var ComponentDoc = require('../../component-doc.jsx');
+let React = require('react');
+let { RaisedButton, Snackbar } = require('material-ui');
+let ComponentDoc = require('../../component-doc');
 
-var SnackbarPage = React.createClass({
 
-  render: function() {
-    var code = 
-      '<Snackbar\n' + 
-      '  message="Event added to your calendar"\n' + 
-      '  action="undo"\n' + 
+class SnackbarPage extends React.Component {
+
+  constructor() {
+    super();
+    this._handleClick = this._handleClick.bind(this);
+  }
+
+  render() {
+    let code =
+      '<Snackbar\n' +
+      '  message="Event added to your calendar"\n' +
+      '  action="undo"\n' +
       '  onActionTouchTap={this._handleAction}/>\n\n' +
       '//Somewhere in our code\n' +
-      '_handleAction: function() {\n' +
+      '_handleAction() {\n' +
       '  //We can add more code to this function, but for now we\'ll just include an alert.\n' +
       '  alert("We removed the event from your calendar.");\n' +
       '}';
 
-    var componentInfo = [
+    let componentInfo = [
       {
         name: 'Props',
         infoArray: [
@@ -39,6 +43,12 @@ var SnackbarPage = React.createClass({
             type: 'bool',
             header: 'default: false',
             desc: 'If true, the snackbar will open once mounted.'
+          },
+          {
+            name: 'style',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of the Snackbar\'s root element.'
           }
         ]
       },
@@ -75,29 +85,29 @@ var SnackbarPage = React.createClass({
         code={code}
         componentInfo={componentInfo}>
 
-        <RaisedButton 
-          onTouchTap={this._handleClick} 
+        <RaisedButton
+          onTouchTap={this._handleClick}
           label="Add to my calendar" />
 
-        <Snackbar 
-          ref="snackbar" 
+        <Snackbar
+          ref="snackbar"
           message="Event added to your calendar"
-          action="undo" 
+          action="undo"
           onActionTouchTap={this._handleAction} />
 
       </ComponentDoc>
     );
-  },
-
-  _handleClick: function(e) {
-    this.refs.snackbar.show();
-  },
-
-  _handleAction: function() {
-    //We can add more code here! In this example, we'll just include an alert.
-    alert("We removed the event from your calendar.");
   }
 
-});
+  _handleClick(e) {
+    this.refs.snackbar.show();
+  }
+
+  _handleAction() {
+    //We can add more code here! In this example, we'll just include an alert.
+    window.alert("We removed the event from your calendar.");
+  }
+
+}
 
 module.exports = SnackbarPage;
