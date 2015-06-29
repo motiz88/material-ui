@@ -3,7 +3,7 @@ let prefixed;
 if (isBrowser) {
   const Modernizr = require('../utils/modernizr.custom');
   const memoize = require('memoizee');
-  prefixed = (Modernizr.prefixed.bind(Modernizr), {length: 1, resolvers: [String], max: 256});
+  prefixed = memoize(Modernizr.prefixed.bind(Modernizr), {length: 1, resolvers: [String], max: 256});
 }
 
 module.exports = {
