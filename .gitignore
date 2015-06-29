@@ -6,3 +6,6 @@ icon-builder/js
 icon-builder/jsx
 # Don't exclude compiled files (motiz88)
 # lib
+
+# jsx Transform Disk Cache
+.module-cache
