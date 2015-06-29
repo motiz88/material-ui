@@ -1,6 +1,10 @@
 const isBrowser = typeof window !== 'undefined';
-let Modernizr = isBrowser ? require('../utils/modernizr.custom') : undefined;
-
+let prefixed;
+if (isBrowser) {
+  const Modernizr = require('../utils/modernizr.custom');
+  const memoize = require('memoizee');
+  prefixed = (Modernizr.prefixed.bind(Modernizr), {length: 1, resolvers: [String], max: 256});
+}
 
 module.exports = {
 
@@ -17,7 +21,7 @@ module.exports = {
   },
 
   single(key) {
-    return isBrowser ? Modernizr.prefixed(key) : key;
+    return isBrowser ? prefixed(key) : key;
   },
 
   singleHyphened(key) {
