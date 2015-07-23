@@ -10,7 +10,7 @@ let Tabs = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -19,15 +19,16 @@ let Tabs = React.createClass({
     tabWidth: React.PropTypes.number,
     tabItemContainerStyle: React.PropTypes.object,
     contentContainerStyle: React.PropTypes.object,
+    inkBarStyle: React.PropTypes.object,
   },
 
   getInitialState(){
     let selectedIndex = 0;
-    if (this.props.initialSelectedIndex && this.props.initialSelectedIndex < this.props.children.length) {
+    if (this.props.initialSelectedIndex && this.props.initialSelectedIndex < this.getTabCount()) {
       selectedIndex = this.props.initialSelectedIndex;
     }
     return {
-      selectedIndex: selectedIndex
+      selectedIndex: selectedIndex,
     };
   },
 
@@ -37,6 +38,10 @@ let Tabs = React.createClass({
         .getComputedStyle(React.findDOMNode(this))
         .getPropertyValue('width'), 10)
     );
+  },
+
+  getTabCount() {
+    return React.Children.count(this.props.children);
   },
 
   componentDidMount() {
@@ -73,17 +78,17 @@ let Tabs = React.createClass({
         height: '48px',
         backgroundColor: themeVariables.backgroundColor,
         whiteSpace: 'nowrap',
-        display: 'table'
-      }
+        display: 'table',
+      },
     };
   },
 
-  render(){
+  render() {
     let styles = this.getStyles();
 
     let tabContent = [];
     let width = this.state.fixedWidth ?
-      100 / this.props.children.length +'%' :
+      100 / this.getTabCount() +'%' :
       this.props.tabWidth + 'px';
 
     let left = 'calc(' + width + '*' + this.state.selectedIndex + ')';
@@ -93,11 +98,11 @@ let Tabs = React.createClass({
         if (tab.props.children) {
           tabContent.push(React.createElement(TabTemplate, {
             key: index,
-            selected: this.state.selectedIndex === index
+            selected: this.state.selectedIndex === index,
           }, tab.props.children));
         }
         else {
-          tabContent.push(undefined)
+          tabContent.push(undefined);
         }
 
         return React.addons.cloneWithProps(tab, {
@@ -105,7 +110,7 @@ let Tabs = React.createClass({
           selected: this.state.selectedIndex === index,
           tabIndex: index,
           width: width,
-          handleTouchTap: this.handleTouchTap
+          handleTouchTap: this.handleTouchTap,
         });
       }
       else {
@@ -120,17 +125,17 @@ let Tabs = React.createClass({
         <div style={this.mergeAndPrefix(styles.tabItemContainer, this.props.tabItemContainerStyle)}>
           {tabs}
         </div>
-        <InkBar left={left} width={width} />
+        <InkBar left={left} width={width} style={this.props.inkBarStyle}/>
         <div style={this.mergeAndPrefix(this.props.contentContainerStyle)}>
           {tabContent}
         </div>
       </div>
-    )
+    );
   },
 
   _tabWidthPropIsValid() {
     return this.props.tabWidth &&
-      (this.props.tabWidth * this.props.children.length <= this.getEvenWidth());
+      (this.props.tabWidth * this.getTabCount() <= this.getEvenWidth());
   },
 
   // Validates that the tabWidth can fit all tabs on the tab bar. If not, the
@@ -138,15 +143,17 @@ let Tabs = React.createClass({
   _updateTabWidth() {
     if (this._tabWidthPropIsValid()) {
       this.setState({
-        fixedWidth: false
-      });
-    } else {
-      this.setState({
-        fixedWidth: true
+        fixedWidth: false,
       });
     }
-  }
+    else {
+      this.setState({
+        fixedWidth: true,
+      });
+    }
+  },
 
 });
 
 module.exports = Tabs;
+

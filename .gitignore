@@ -9,3 +9,6 @@ icon-builder/jsx
 
 # jsx Transform Disk Cache
 .module-cache
+
+# Exclude IDE project folders
+.idea

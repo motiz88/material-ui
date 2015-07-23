@@ -7,13 +7,13 @@ let ClearFix = React.createClass({
   render() {
     let {
       style,
-      ...other
+      ...other,
     } = this.props;
 
     let before = function() {
       return {
         content: "' '",
-        display: 'table'
+        display: 'table',
       };
     };
 
@@ -29,7 +29,7 @@ let ClearFix = React.createClass({
           {this.props.children}
       </BeforeAfterWrapper>
     );
-  }
+  },
 });
 
 module.exports = ClearFix;

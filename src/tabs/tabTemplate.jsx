@@ -5,16 +5,16 @@ let TabTemplate = React.createClass({
 
   render() {
     let styles = {
-      'height': '0px',
+      'height': 0,
       'overflow': 'hidden',
       'width': '100%',
       'position': 'relative',
-      'textAlign': 'initial'
+      'textAlign': 'initial',
     };
 
     if (this.props.selected) {
-      delete styles.height
-      delete styles.overflow
+      delete styles.height;
+      delete styles.overflow;
     }
 
     return (
@@ -22,7 +22,7 @@ let TabTemplate = React.createClass({
         {this.props.children}
       </div>
     );
-  }
+  },
 });
 
 module.exports = TabTemplate;

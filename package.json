@@ -1,7 +1,7 @@
 {
   "name": "material-ui",
   "author": "Call-em-all Engineering Team",
-  "version": "0.9.2",
+  "version": "0.10.1",
   "description": "Material Design UI components built with React",
   "main": "./lib",
   "scripts": {
@@ -39,6 +39,8 @@
     "babel-eslint": "^3.1.17",
     "eslint": "^0.23.0",
     "eslint-plugin-react": "^2.5.2",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^0.15.0",
     "react-router": "^0.13.3",
     "react-tap-event-plugin": "^0.1.6"
   }

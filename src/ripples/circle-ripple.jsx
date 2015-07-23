@@ -4,7 +4,7 @@ let Transitions = require('../styles/transitions');
 let Colors = require('../styles/colors');
 
 
-let RippleCircle = React.createClass({
+let CircleRipple = React.createClass({
 
   mixins: [StylePropable],
 
@@ -12,12 +12,12 @@ let RippleCircle = React.createClass({
     color: React.PropTypes.string,
     opacity: React.PropTypes.number,
     started: React.PropTypes.bool,
-    ending: React.PropTypes.bool
+    ending: React.PropTypes.bool,
   },
 
   getDefaultProps() {
     return {
-      color: Colors.darkBlack
+      color: Colors.darkBlack,
     };
   },
 
@@ -27,7 +27,7 @@ let RippleCircle = React.createClass({
       started,
       ending,
       style,
-      ...other
+      ...other,
     } = this.props;
 
     let styles = this.mergeAndPrefix({
@@ -43,14 +43,14 @@ let RippleCircle = React.createClass({
       backgroundColor: this.props.color,
       transition:
         Transitions.easeOut('2s', 'opacity') + ',' +
-        Transitions.easeOut('1s', 'transform')
+        Transitions.easeOut('1s', 'transform'),
     }, this.props.style);
 
     return (
       <div {...other} style={styles} />
     );
-  }
+  },
 
 });
 
-module.exports = RippleCircle;
+module.exports = CircleRipple;

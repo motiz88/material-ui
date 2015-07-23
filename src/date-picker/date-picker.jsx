@@ -11,38 +11,40 @@ let DatePicker = React.createClass({
   mixins: [StylePropable, WindowListenable],
 
   propTypes: {
+    autoOk: React.PropTypes.bool,
     defaultDate: React.PropTypes.object,
     formatDate: React.PropTypes.func,
-    mode: React.PropTypes.oneOf(['portrait', 'landscape', 'inline']),
-    onFocus: React.PropTypes.func,
-    onTouchTap: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    onShow: React.PropTypes.func,
-    onDismiss: React.PropTypes.func,
-    minDate: React.PropTypes.object,
-    maxDate: React.PropTypes.object,
-    shouldDisableDate: React.PropTypes.func,
     hideToolbarYearChange: React.PropTypes.bool,
-    autoOk: React.PropTypes.bool,
-    showYearSelector: React.PropTypes.bool
+    maxDate: React.PropTypes.object,
+    minDate: React.PropTypes.object,
+    mode: React.PropTypes.oneOf(['portrait', 'landscape', 'inline']),
+    onDismiss: React.PropTypes.func,
+    onChange: React.PropTypes.func,
+    onFocus: React.PropTypes.func,
+    onShow: React.PropTypes.func,
+    onTouchTap: React.PropTypes.func,
+    shouldDisableDate: React.PropTypes.func,
+    showYearSelector: React.PropTypes.bool,
+    style: React.PropTypes.object,
+    textFieldStyle: React.PropTypes.object,
   },
 
   windowListeners: {
-    'keyup': '_handleWindowKeyUp'
+    keyup: '_handleWindowKeyUp',
   },
 
   getDefaultProps() {
     return {
       formatDate: DateTime.format,
       autoOk: false,
-      showYearSelector: false
+      showYearSelector: false,
     };
   },
 
   getInitialState() {
     return {
       date: this.props.defaultDate,
-      dialogDate: new Date()
+      dialogDate: new Date(),
     };
   },
 
@@ -54,35 +56,44 @@ let DatePicker = React.createClass({
 
   render() {
     let {
+      autoOk,
+      defaultDate,
       formatDate,
+      maxDate,
+      minDate,
       mode,
+      onDismiss,
       onFocus,
       onTouchTap,
       onShow,
-      onDismiss,
-      minDate,
-      maxDate,
-      autoOk,
       showYearSelector,
-      ...other
+      style,
+      textFieldStyle,
+      ...other,
     } = this.props;
     let defaultInputValue;
 
-    if (this.props.defaultDate) {
-      defaultInputValue = this.props.formatDate(this.props.defaultDate);
+    if (defaultDate) {
+      defaultInputValue = formatDate(defaultDate);
+    }
+
+    // Format the date of controlled inputs
+    if (other.value) {
+      other.value = formatDate(other.value);
     }
 
     return (
-      <div style={this.props.style}>
+      <div style={style}>
         <TextField
           {...other}
+          style={textFieldStyle}
           ref="input"
           defaultValue={defaultInputValue}
           onFocus={this._handleInputFocus}
           onTouchTap={this._handleInputTouchTap}/>
         <DatePickerDialog
           ref="dialogWindow"
-          mode={this.props.mode}
+          mode={mode}
           initialDate={this.state.dialogDate}
           onAccept={this._handleDialogAccept}
           onShow={onShow}
@@ -104,9 +115,11 @@ let DatePicker = React.createClass({
 
   setDate(d) {
     this.setState({
-      date: d
+      date: d,
     });
-    this.refs.input.setValue(this.props.formatDate(d));
+    if (!this._isControlled()) {
+      this.refs.input.setValue(this.props.formatDate(d));
+    }
   },
 
   _handleDialogAccept(d) {
@@ -125,7 +138,7 @@ let DatePicker = React.createClass({
 
   _handleInputTouchTap(e) {
     this.setState({
-      dialogDate: this.getDate()
+      dialogDate: this.getDate(),
     });
 
     this.refs.dialogWindow.show();
@@ -134,7 +147,12 @@ let DatePicker = React.createClass({
 
   _handleWindowKeyUp() {
     //TO DO: open the dialog if input has focus
-  }
+  },
+
+  _isControlled() {
+    return this.props.hasOwnProperty('value') ||
+      this.props.hasOwnProperty('valueLink');
+  },
 
 });
 

@@ -5,7 +5,7 @@ let ClockPointer = require("./clock-pointer");
 
 
 function rad2deg(rad) {
-  return rad * 57.29577951308232
+  return rad * 57.29577951308232;
 }
 
 function getTouchEventOffsetValues(e) {
@@ -14,7 +14,7 @@ function getTouchEventOffsetValues(e) {
 
   let offset = {
     offsetX: e.clientX - boundingRect.left,
-    offsetY: e.clientY - boundingRect.top
+    offsetY: e.clientY - boundingRect.top,
   };
 
   return offset;
@@ -26,19 +26,20 @@ let ClockMinutes = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
     initialMinutes: React.PropTypes.number,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
   },
 
   center: {x: 0, y: 0},
   basePoint: {x: 0, y: 0},
+
   isMousePressed(e) {
 
-    if (typeof e.buttons == "undefined") {
+    if (typeof e.buttons === "undefined") {
       return e.nativeEvent.which;
     }
     return e.buttons;
@@ -48,7 +49,7 @@ let ClockMinutes = React.createClass({
   getDefaultProps() {
     return {
       initialMinutes: new Date().getMinutes(),
-      onChange() {}
+      onChange: () => {},
     };
   },
 
@@ -62,9 +63,8 @@ let ClockMinutes = React.createClass({
 
       this.basePoint = {
         x: this.center.x,
-        y: 0
+        y: 0,
       };
-
   },
 
   handleUp(e) {
@@ -74,7 +74,7 @@ let ClockMinutes = React.createClass({
 
   handleMove(e) {
     e.preventDefault();
-    if (this.isMousePressed(e) != 1 ) return;
+    if (this.isMousePressed(e) !== 1 ) return;
     this.setClock(e.nativeEvent, false);
   },
 
@@ -91,9 +91,9 @@ let ClockMinutes = React.createClass({
       e.offsetY = offset.offsetY;
     }
 
-     let minutes = this.getMinutes(e.offsetX, e.offsetY);
+    let minutes = this.getMinutes(e.offsetX, e.offsetY);
 
-     this.props.onChange(minutes, finish);
+    this.props.onChange(minutes, finish);
   },
 
   getMinutes(offsetX, offsetY) {
@@ -103,7 +103,7 @@ let ClockMinutes = React.createClass({
     let cx = this.basePoint.x - this.center.x;
     let cy = this.basePoint.y - this.center.y;
 
-    let atan = Math.atan2(cx, cy) -  Math.atan2(x, y);
+    let atan = Math.atan2(cx, cy) - Math.atan2(x, y);
 
     let deg = rad2deg(atan);
     deg = Math.round(deg / step ) * step;
@@ -125,13 +125,13 @@ let ClockMinutes = React.createClass({
     let numbers = minutes.map((minute) => {
       let isSelected = selectedMinutes === minute;
       if (isSelected) hasSelected = true;
-      return <ClockNumber isSelected={isSelected} type="minute" value={minute} />;
+      return <ClockNumber key={minute} isSelected={isSelected} type="minute" value={minute} />;
     });
 
     return {
       numbers: numbers,
       hasSelected: hasSelected,
-      selected: selectedMinutes
+      selected: selectedMinutes,
     };
   },
 
@@ -143,26 +143,26 @@ let ClockMinutes = React.createClass({
         borderRadius: "100%",
         position: "relative",
         pointerEvents: "none",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
       },
 
       hitMask: {
         height: "100%",
         width: "100%",
-        pointerEvents: "auto"
-      }
+        pointerEvents: "auto",
+      },
     };
 
     let minutes = this._getMinuteNumbers();
 
     return (
       <div ref="clock" style={this.mergeAndPrefix(styles.root)} >
-        <ClockPointer value={minutes.selected}  type="minute" />
+        <ClockPointer value={minutes.selected} type="minute" />
         {minutes.numbers}
-        <div ref="mask"  style={this.mergeAndPrefix(styles.hitMask)} hasSelected={minutes.hasSelected} onTouchMove={this.handleTouch} onTouchEnd={this.handleTouch} onMouseUp={this.handleUp} onMouseMove={this.handleMove} />
+        <div ref="mask" style={this.mergeAndPrefix(styles.hitMask)} hasSelected={minutes.hasSelected} onTouchMove={this.handleTouch} onTouchEnd={this.handleTouch} onMouseUp={this.handleUp} onMouseMove={this.handleMove} />
       </div>
     );
-  }
+  },
 });
 
 module.exports = ClockMinutes;

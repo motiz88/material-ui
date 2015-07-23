@@ -9,7 +9,7 @@ let RadioButtonGroup = React.createClass({
     valueSelected: React.PropTypes.string,
     defaultSelected: React.PropTypes.string,
     labelPosition: React.PropTypes.oneOf(['left', 'right']),
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
   },
 
   _hasCheckAttribute(radioButton) {
@@ -20,7 +20,7 @@ let RadioButtonGroup = React.createClass({
   getInitialState() {
     return {
       numberCheckedRadioButtons: 0,
-      selected: this.props.valueSelected || this.props.defaultSelected || ''
+      selected: this.props.valueSelected || this.props.defaultSelected || '',
     };
   },
 
@@ -47,7 +47,7 @@ let RadioButtonGroup = React.createClass({
         value,
         label,
         onCheck,
-        ...other
+        ...other,
       } = option.props;
 
       return <RadioButton
@@ -59,7 +59,7 @@ let RadioButtonGroup = React.createClass({
         label={option.props.label}
         labelPosition={this.props.labelPosition}
         onCheck={this._onChange}
-        checked={option.props.value == this.state.selected}/>;
+        checked={option.props.value === this.state.selected}/>;
 
     }, this);
 
@@ -102,7 +102,7 @@ let RadioButtonGroup = React.createClass({
 
   clearValue() {
     this.setSelectedValue('');
-  }
+  },
 
 });
 

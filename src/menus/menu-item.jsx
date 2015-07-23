@@ -10,7 +10,7 @@ let MenuItem = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -19,23 +19,37 @@ let MenuItem = React.createClass({
     disabled: React.PropTypes.bool,
     innerDivStyle: React.PropTypes.object,
     insetChildren: React.PropTypes.bool,
+    focusState: React.PropTypes.oneOf([
+      'none',
+      'focused',
+      'keyboard-focused',
+    ]),
     leftIcon: React.PropTypes.element,
     rightIcon: React.PropTypes.element,
     secondaryText: React.PropTypes.node,
-    value: React.PropTypes.string
+    value: React.PropTypes.string,
   },
 
   getDefaultProps() {
     return {
+      focusState: 'none',
     };
   },
 
-  render() {
+  componentDidMount() {
+    this._applyFocusState();
+  },
 
+  componentDidUpdate() {
+    this._applyFocusState();
+  },
+
+  render() {
     let {
       checked,
       desktop,
       disabled,
+      focusState,
       innerDivStyle,
       insetChildren,
       leftIcon,
@@ -43,7 +57,7 @@ let MenuItem = React.createClass({
       secondaryText,
       style,
       value,
-      ...other
+      ...other,
     } = this.props;
 
     let disabledColor = this.context.muiTheme.palette.disabledColor;
@@ -56,32 +70,32 @@ let MenuItem = React.createClass({
         color: disabled ? disabledColor : textColor,
         lineHeight: desktop ? '32px' : '48px',
         fontSize: desktop ? 15 : 16,
-        whiteSpace: 'nowrap'
+        whiteSpace: 'nowrap',
       },
 
       innerDivStyle: {
         paddingLeft: leftIcon || insetChildren || checked ? leftIndent : sidePadding,
         paddingRight: sidePadding,
         paddingBottom: 0,
-        paddingTop: 0
+        paddingTop: 0,
       },
 
       secondaryText: {
-        float: 'right'
+        float: 'right',
       },
 
       leftIconDesktop: {
         padding: 0,
         left: 24,
-        top: 4
+        top: 4,
       },
 
       rightIconDesktop: {
         padding: 0,
         right: 24,
         top: 4,
-        fill: Colors.grey600
-      }
+        fill: Colors.grey600,
+      },
     };
 
     let secondaryTextIsAnElement = React.isValidElement(secondaryText);
@@ -116,13 +130,18 @@ let MenuItem = React.createClass({
         innerDivStyle={mergedInnerDivStyles}
         insetChildren={insetChildren}
         leftIcon={styledLeftIcon}
+        ref="listItem"
         rightIcon={rightIconElement}
         style={mergedRootStyles}>
         {this.props.children}
         {secondaryTextElement}
       </ListItem>
     );
-  }
+  },
+
+  _applyFocusState() {
+    this.refs.listItem.applyFocusState(this.props.focusState);
+  },
 });
 
 module.exports = MenuItem;

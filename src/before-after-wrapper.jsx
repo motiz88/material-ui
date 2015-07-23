@@ -45,7 +45,7 @@ let BeforeAfterWrapper = React.createClass({
     afterStyle: React.PropTypes.object,
     beforeElementType: React.PropTypes.string,
     afterElementType: React.PropTypes.string,
-    elementType: React.PropTypes.string
+    elementType: React.PropTypes.string,
   },
 
   getDefaultProps() {
@@ -57,14 +57,13 @@ let BeforeAfterWrapper = React.createClass({
   },
 
   render() {
-
     let {
       beforeStyle,
       afterStyle,
       beforeElementType,
       afterElementType,
       elementType,
-      ...other
+      ...other,
     } = this.props;
 
     let beforeElement, afterElement;
@@ -73,13 +72,17 @@ let BeforeAfterWrapper = React.createClass({
     afterStyle = AutoPrefix.all({boxSizing: 'border-box'});
 
     if (this.props.beforeStyle) beforeElement =
-      React.createElement(  this.props.beforeElementType,
-                            {style: this.mergeAndPrefix(beforeStyle, this.props.beforeStyle),
-                            key: "::before"}  );
+      React.createElement(this.props.beforeElementType,
+                            {
+                              style: this.mergeAndPrefix(beforeStyle, this.props.beforeStyle),
+                              key: "::before",
+                            });
     if (this.props.afterStyle) afterElement =
-      React.createElement(  this.props.afterElementType,
-                            {style: this.mergeAndPrefix(afterStyle, this.props.afterStyle),
-                            key: "::after"}   );
+      React.createElement(this.props.afterElementType,
+                            {
+                              style: this.mergeAndPrefix(afterStyle, this.props.afterStyle),
+                              key: "::after",
+                            });
 
     let children = [beforeElement, this.props.children, afterElement];
 
@@ -87,7 +90,7 @@ let BeforeAfterWrapper = React.createClass({
     props.style = this.props.style;
 
     return React.createElement(this.props.elementType, props, children);
-  }
+  },
 
 });
 

@@ -6,7 +6,7 @@ let StylePropable = require('./mixins/style-propable');
 let InkBar = React.createClass({
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -28,15 +28,15 @@ let InkBar = React.createClass({
       height: 2,
       marginTop: -2,
       position: 'relative',
-      transition: Transitions.easeOut('1s', 'left')
-    });
+      transition: Transitions.easeOut('1s', 'left'),
+    }, this.props.style);
 
     return (
       <div style={styles}>
         &nbsp;
       </div>
     );
-  }
+  },
 
 });
 

@@ -19,7 +19,7 @@ let FlatButton = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -28,17 +28,17 @@ let FlatButton = React.createClass({
     label: validateLabel,
     labelStyle: React.PropTypes.object,
     onKeyboardFocus: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func,
+    onMouseLeave: React.PropTypes.func,
+    onMouseEnter: React.PropTypes.func,
     onTouchStart: React.PropTypes.func,
     primary: React.PropTypes.bool,
     rippleColor: React.PropTypes.string,
-    secondary: React.PropTypes.bool
+    secondary: React.PropTypes.bool,
   },
 
   getDefaultProps() {
     return {
-      labelStyle: {}
+      labelStyle: {},
     };
   },
 
@@ -46,7 +46,7 @@ let FlatButton = React.createClass({
     return {
       hovered: false,
       isKeyboardFocused: false,
-      touch: false
+      touch: false,
     };
   },
 
@@ -57,14 +57,14 @@ let FlatButton = React.createClass({
       label,
       labelStyle,
       onKeyboardFocus,
-      onMouseOut,
-      onMouseOver,
+      onMouseLeave,
+      onMouseEnter,
       onTouchStart,
       primary,
       rippleColor,
       secondary,
       style,
-      ...other
+      ...other,
       } = this.props;
 
     let theme = this.context.muiTheme;
@@ -100,12 +100,12 @@ let FlatButton = React.createClass({
       margin: 0,
       //This is need so that ripples do not bleed past border radius.
       //See: http://stackoverflow.com/questions/17298739
-      transform: 'translate3d(0, 0, 0)'
+      transform: 'translate3d(0, 0, 0)',
     }, this.props.style);
 
     let mergedLabelStyles = this.mergeAndPrefix({
       position: 'relative',
-      padding: '0 ' + theme.spacing.desktopGutterLess + 'px'
+      padding: '0 ' + theme.spacing.desktopGutterLess + 'px',
     }, labelStyle);
 
     let labelElement = label ? <span style={mergedLabelStyles}>{label}</span> : null;
@@ -116,8 +116,8 @@ let FlatButton = React.createClass({
         disabled={disabled}
         focusRippleColor={buttonRippleColor}
         onKeyboardFocus={this._handleKeyboardFocus}
-        onMouseOut={this._handleMouseOut}
-        onMouseOver={this._handleMouseOver}
+        onMouseLeave={this._handleMouseLeave}
+        onMouseEnter={this._handleMouseEnter}
         onTouchStart={this._handleTouchStart}
         style={mergedRootStyles}
         touchRippleColor={buttonRippleColor}>
@@ -129,24 +129,26 @@ let FlatButton = React.createClass({
 
   _handleKeyboardFocus(e, isKeyboardFocused) {
     this.setState({isKeyboardFocused: isKeyboardFocused});
-    if (this.props.onKeyboardFocus) this.props.onKeyboardFocus(e, isKeyboardFocused);
+    if (this.props.onKeyboardFocus) {
+      this.props.onKeyboardFocus(e, isKeyboardFocused);
+    }
   },
 
-  _handleMouseOver(e) {
+  _handleMouseEnter(e) {
     //Cancel hover styles for touch devices
     if (!this.state.touch) this.setState({hovered: true});
-    if (this.props.onMouseOver) this.props.onMouseOver(e);
+    if (this.props.onMouseEnter) this.props.onMouseEnter(e);
   },
 
-  _handleMouseOut(e) {
+  _handleMouseLeave(e) {
     this.setState({hovered: false});
-    if (this.props.onMouseOut) this.props.onMouseOut(e);
+    if (this.props.onMouseLeave) this.props.onMouseLeave(e);
   },
 
   _handleTouchStart(e) {
-     this.setState({touch: true});
+    this.setState({touch: true});
     if (this.props.onTouchStart) this.props.onTouchStart(e);
-  }
+  },
 
 });
 

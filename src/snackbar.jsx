@@ -12,20 +12,24 @@ let Snackbar = React.createClass({
 
   manuallyBindClickAway: true,
 
+  // ID of the active timer.
+  _autoHideTimerId: undefined,
+
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
-    action: React.PropTypes.string,
     message: React.PropTypes.string.isRequired,
+    action: React.PropTypes.string,
+    autoHideDuration: React.PropTypes.number,
+    onActionTouchTap: React.PropTypes.func,
     openOnMount: React.PropTypes.bool,
-    onActionTouchTap: React.PropTypes.func
   },
 
   getInitialState() {
     return {
-      open: this.props.openOnMount || false
+      open: this.props.openOnMount || false,
     };
   },
 
@@ -34,8 +38,10 @@ let Snackbar = React.createClass({
   },
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.open != this.state.open) {
+    if (prevState.open !== this.state.open) {
       if (this.state.open) {
+        this._setAutoHideTimer();
+
         //Only Bind clickaway after transition finishes
         CssEvent.onTransitionEnd(React.findDOMNode(this), () => {
           this._bindClickAway();
@@ -72,13 +78,15 @@ let Snackbar = React.createClass({
         bottom: this.getSpacing().desktopGutter,
         marginLeft: this.getSpacing().desktopGutter,
 
-        left: -10000,
+        left: 0,
         opacity: 0,
+        visibility: 'hidden',
         transform: 'translate3d(0, 20px, 0)',
         transition:
           Transitions.easeOut('0ms', 'left', '400ms') + ',' +
           Transitions.easeOut('400ms', 'opacity') + ',' +
-          Transitions.easeOut('400ms', 'transform'),
+          Transitions.easeOut('400ms', 'transform') + ',' +
+          Transitions.easeOut('400ms', 'visibility'),
       },
       action: {
         color: this.getTheme().actionColor,
@@ -86,18 +94,20 @@ let Snackbar = React.createClass({
         marginTop: 6,
         marginRight: -16,
         marginLeft: this.getSpacing().desktopGutter,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
       },
       rootWhenOpen: {
-        left: '0px',
         opacity: 1,
+        visibility: 'visible',
         transform: 'translate3d(0, 0, 0)',
         transition:
           Transitions.easeOut('0ms', 'left', '0ms') + ',' +
           Transitions.easeOut('400ms', 'opacity', '0ms') + ',' +
-          Transitions.easeOut('400ms', 'transform', '0ms')
-      }
+          Transitions.easeOut('400ms', 'transform', '0ms') + ',' +
+          Transitions.easeOut('400ms', 'visibility', '0ms'),
+      },
     };
+
     return styles;
   },
 
@@ -131,8 +141,22 @@ let Snackbar = React.createClass({
   },
 
   dismiss() {
+    this._clearAutoHideTimer();
     this.setState({ open: false });
-  }
+  },
+
+  _clearAutoHideTimer() {
+    if (this._autoHideTimerId !== undefined) {
+      this._autoHideTimerId = clearTimeout(this._autoHideTimerId);
+    }
+  },
+
+  _setAutoHideTimer() {
+    if (this.props.autoHideDuration > 0) {
+      this._clearAutoHideTimer();
+      this._autoHideTimerId = setTimeout(() => { this.dismiss(); }, this.props.autoHideDuration);
+    }
+  },
 
 });
 

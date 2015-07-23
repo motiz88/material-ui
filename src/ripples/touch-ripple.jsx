@@ -1,7 +1,7 @@
 let React = require('react');
 let StylePropable = require('../mixins/style-propable');
 let Dom = require('../utils/dom');
-let RippleCircle = require('./circle');
+let RippleCircle = require('./circle-ripple');
 
 
 let TouchRipple = React.createClass({
@@ -19,13 +19,12 @@ let TouchRipple = React.createClass({
       ripples: [{
         key: 0,
         started: false,
-        ending: false
-      }]
+        ending: false,
+      }],
     };
   },
 
   render() {
-
     let styles = this.mergeAndPrefix({
       height: '100%',
       width: '100%',
@@ -39,7 +38,7 @@ let TouchRipple = React.createClass({
       <div
         onMouseUp={this._handleMouseUp}
         onMouseDown={this._handleMouseDown}
-        onMouseOut={this._handleMouseOut}
+        onMouseLeave={this._handleMouseLeave}
         onTouchStart={this._handleTouchStart}
         onTouchEnd={this._handleTouchEnd}>
         <div style={styles}>
@@ -79,12 +78,12 @@ let TouchRipple = React.createClass({
     ripples.push({
       key: nextKey,
       started: false,
-      ending: false
+      ending: false,
     });
 
     //Re-render
     this.setState({
-      ripples: ripples
+      ripples: ripples,
     });
   },
 
@@ -107,7 +106,7 @@ let TouchRipple = React.createClass({
     if (endingRipple) {
       //Re-render
       this.setState({
-        ripples: ripples
+        ripples: ripples,
       });
 
       //Wait 2 seconds and remove the ripple from DOM
@@ -115,7 +114,7 @@ let TouchRipple = React.createClass({
         ripples.shift();
         if (this.isMounted()) {
           this.setState({
-            ripples: ripples
+            ripples: ripples,
           });
         }
       }, 2000);
@@ -131,7 +130,7 @@ let TouchRipple = React.createClass({
     this.end();
   },
 
-  _handleMouseOut() {
+  _handleMouseLeave() {
     this.end();
   },
 
@@ -189,7 +188,7 @@ let TouchRipple = React.createClass({
           opacity={this.props.opacity} />
       );
     });
-  }
+  },
 
 });
 

@@ -7,7 +7,7 @@ let TableRowColumn = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -15,18 +15,18 @@ let TableRowColumn = React.createClass({
     onClick: React.PropTypes.func,
     onHover: React.PropTypes.func,
     onHoverExit: React.PropTypes.func,
-    hoverable: React.PropTypes.bool
+    hoverable: React.PropTypes.bool,
   },
 
   getDefaultProps() {
     return {
-      hoverable: false
+      hoverable: false,
     };
   },
 
   getInitialState() {
     return {
-      hovered: false
+      hovered: false,
     };
   },
 
@@ -44,7 +44,7 @@ let TableRowColumn = React.createClass({
       fontSize: 13,
       overflow: 'hidden',
       whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis'
+      textOverflow: 'ellipsis',
     };
 
     if (React.Children.count(this.props.children) === 1 && !isNaN(this.props.children)) {
@@ -59,8 +59,8 @@ let TableRowColumn = React.createClass({
     let styles = this.getStyles();
     let handlers = {
       onClick: this._onClick,
-      onMouseOver: this._onMouseOver,
-      onMouseOut: this._onMouseOut
+      onMouseEnter: this._onMouseEnter,
+      onMouseLeave: this._onMouseLeave,
     };
 
     return (
@@ -78,19 +78,19 @@ let TableRowColumn = React.createClass({
     if (this.props.onClick) this.props.onClick(e, this.props.columnNumber);
   },
 
-  _onMouseOver(e) {
+  _onMouseEnter(e) {
     if (this.props.hoverable) {
       this.setState({hovered: true});
       if (this.props.onHover) this.props.onHover(e, this.props.columnNumber);
     }
   },
 
-  _onMouseOut(e) {
+  _onMouseLeave(e) {
     if (this.props.hoverable) {
       this.setState({hovered: false});
       if (this.props.onHoverExit) this.props.onHoverExit(e, this.props.columnNumber);
     }
-  }
+  },
 
 });
 

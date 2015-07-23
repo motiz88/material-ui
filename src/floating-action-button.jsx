@@ -12,7 +12,7 @@ let getZDepth = function(disabled) {
   let zDepth = disabled ? 0 : 2;
   return {
     zDepth: zDepth,
-    initialZDepth: zDepth
+    initialZDepth: zDepth,
   };
 };
 
@@ -22,7 +22,7 @@ let FloatingActionButton = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -32,10 +32,10 @@ let FloatingActionButton = React.createClass({
     mini: React.PropTypes.bool,
     onMouseDown: React.PropTypes.func,
     onMouseUp: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
+    onMouseLeave: React.PropTypes.func,
     onTouchEnd: React.PropTypes.func,
     onTouchStart: React.PropTypes.func,
-    secondary: React.PropTypes.bool
+    secondary: React.PropTypes.bool,
   },
 
   getInitialState() {
@@ -44,7 +44,7 @@ let FloatingActionButton = React.createClass({
       hovered: false,
       initialZDepth: zDepth,
       touch: false,
-      zDepth: zDepth
+      zDepth: zDepth,
     };
   },
 
@@ -53,7 +53,7 @@ let FloatingActionButton = React.createClass({
   },
 
   componentWillReceiveProps(newProps) {
-    if (newProps.disabled !== this.props.disabled){
+    if (newProps.disabled !== this.props.disabled) {
       this.setState(getZDepth(newProps.disabled));
     }
   },
@@ -70,7 +70,7 @@ let FloatingActionButton = React.createClass({
   },
 
   _getBackgroundColor() {
-    return  this.props.disabled ? this.getTheme().disabledColor :
+    return this.props.disabled ? this.getTheme().disabledColor :
       this.props.secondary ? this.getTheme().secondaryColor :
       this.getTheme().color;
   },
@@ -81,7 +81,7 @@ let FloatingActionButton = React.createClass({
   },
 
   _getIconColor() {
-    return  this.props.disabled ? this.getTheme().disabledTextColor :
+    return this.props.disabled ? this.getTheme().disabledTextColor :
       this.props.secondary ? this.getTheme().secondaryIconColor :
       this.getTheme().iconColor;
   },
@@ -92,7 +92,7 @@ let FloatingActionButton = React.createClass({
     let styles = {
       root: {
         transition: Transitions.easeOut(),
-        display: 'inline-block'
+        display: 'inline-block',
       },
       container: {
         transition: Transitions.easeOut(),
@@ -108,28 +108,28 @@ let FloatingActionButton = React.createClass({
         //This is need so that ripples do not bleed
         //past border radius.
         //See: http://stackoverflow.com/questions/17298739/css-overflow-hidden-not-working-in-chrome-when-parent-has-border-radius-and-chil
-        transform: 'translate3d(0, 0, 0)'
+        transform: 'translate3d(0, 0, 0)',
       },
       containerWhenMini: {
         height: themeVariables.miniSize,
-        width: themeVariables.miniSize
+        width: themeVariables.miniSize,
       },
       overlay: {
         transition: Transitions.easeOut(),
-        top: 0
+        top: 0,
       },
       overlayWhenHovered: {
-        backgroundColor: ColorManipulator.fade(this._getIconColor(), 0.4)
+        backgroundColor: ColorManipulator.fade(this._getIconColor(), 0.4),
       },
       icon: {
         height: themeVariables.buttonSize,
         lineHeight: themeVariables.buttonSize + 'px',
         fill: themeVariables.iconColor,
-        color: this._getIconColor()
+        color: this._getIconColor(),
       },
       iconWhenMini: {
         height: themeVariables.miniSize,
-        lineHeight: themeVariables.miniSize + 'px'
+        lineHeight: themeVariables.miniSize + 'px',
       },
     };
     return styles;
@@ -161,17 +161,17 @@ let FloatingActionButton = React.createClass({
       style: this.mergeAndPrefix(
         styles.icon,
         mini && styles.iconWhenMini,
-        iconStyle)
+        iconStyle),
     });
 
     let buttonEventHandlers = disabled ? null : {
       onMouseDown: this._handleMouseDown,
       onMouseUp: this._handleMouseUp,
-      onMouseOut: this._handleMouseOut,
-      onMouseOver: this._handleMouseOver,
+      onMouseLeave: this._handleMouseLeave,
+      onMouseEnter: this._handleMouseEnter,
       onTouchStart: this._handleTouchStart,
       onTouchEnd: this._handleTouchEnd,
-      onKeyboardFocus: this._handleKeyboardFocus
+      onKeyboardFocus: this._handleKeyboardFocus,
     };
 
     return (
@@ -218,22 +218,22 @@ let FloatingActionButton = React.createClass({
     if (this.props.onMouseUp) this.props.onMouseUp(e);
   },
 
-  _handleMouseOut(e) {
+  _handleMouseLeave(e) {
     if (!this.refs.container.isKeyboardFocused()) this.setState({ zDepth: this.state.initialZDepth, hovered: false });
-    if (this.props.onMouseOut) this.props.onMouseOut(e);
+    if (this.props.onMouseLeave) this.props.onMouseLeave(e);
   },
 
-  _handleMouseOver(e) {
+  _handleMouseEnter(e) {
     if (!this.refs.container.isKeyboardFocused() && !this.state.touch) {
       this.setState({hovered: true});
     }
-    if (this.props.onMouseOver) this.props.onMouseOver(e);
+    if (this.props.onMouseEnter) this.props.onMouseEnter(e);
   },
 
   _handleTouchStart(e) {
     this.setState({
       touch: true,
-      zDepth: this.state.initialZDepth + 1
+      zDepth: this.state.initialZDepth + 1,
     });
     if (this.props.onTouchStart) this.props.onTouchStart(e);
   },
@@ -247,11 +247,12 @@ let FloatingActionButton = React.createClass({
     if (keyboardFocused && !this.props.disabled) {
       this.setState({ zDepth: this.state.initialZDepth + 1 });
       React.findDOMNode(this.refs.overlay).style.backgroundColor = ColorManipulator.fade(this.getStyles().icon.color, 0.4);
-    } else if (!this.state.hovered) {
+    }
+    else if (!this.state.hovered) {
       this.setState({ zDepth: this.state.initialZDepth });
       React.findDOMNode(this.refs.overlay).style.backgroundColor = 'transparent';
     }
-  }
+  },
 
 });
 

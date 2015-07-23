@@ -15,13 +15,15 @@ let CardHeader = React.createClass({
     subtitle: React.PropTypes.string,
     subtitleColor: React.PropTypes.string,
     subtitleStyle: React.PropTypes.object,
-    textStyle: React.PropTypes.object
+    textStyle: React.PropTypes.object,
+    expandable: React.PropTypes.bool,
+    showExpandableButton: React.PropTypes.bool,
   },
 
   getDefaultProps() {
     return {
       titleColor: Styles.Colors.darkBlack,
-      subtitleColor: Styles.Colors.lightBlack
+      subtitleColor: Styles.Colors.lightBlack,
     };
   },
 
@@ -31,26 +33,27 @@ let CardHeader = React.createClass({
         height: 72,
         padding: 16,
         fontWeight: Styles.Typography.fontWeightMedium,
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        position: 'relative',
       },
       text: {
         display: 'inline-block',
-        verticalAlign: 'top'
+        verticalAlign: 'top',
       },
       avatar: {
-        marginRight:16
+        marginRight: 16,
       },
       title: {
         color: this.props.titleColor,
         display: 'block',
-        fontSize: 15
+        fontSize: 15,
       },
       subtitle: {
         color: this.props.subtitleColor,
         display: 'block',
-        fontSize: 14
-      }
-    }
+        fontSize: 14,
+      },
+    };
   },
 
   render() {
@@ -63,10 +66,10 @@ let CardHeader = React.createClass({
     let avatar = this.props.avatar;
     if (React.isValidElement(this.props.avatar)) {
       let avatarMergedStyle = this.mergeStyles(styles.avatar, avatar.props.style);
-      avatar = React.cloneElement(avatar, {style:avatarMergedStyle})
+      avatar = React.cloneElement(avatar, {style:avatarMergedStyle});
     }
     else
-      avatar = <Avatar src={this.props.avatar} style={styles.avatar}/>
+      avatar = <Avatar src={this.props.avatar} style={styles.avatar}/>;
 
     return (
       <div {...this.props} style={rootStyle}>
@@ -75,9 +78,10 @@ let CardHeader = React.createClass({
           <span style={titleStyle}>{this.props.title}</span>
           <span style={subtitleStyle}>{this.props.subtitle}</span>
         </div>
+        {this.props.children}
       </div>
     );
-  }
+  },
 });
 
 module.exports = CardHeader;

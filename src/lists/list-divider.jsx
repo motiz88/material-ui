@@ -7,18 +7,18 @@ let ListDivider = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
-    inset: React.PropTypes.bool
+    inset: React.PropTypes.bool,
   },
 
   render() {
     let {
       inset,
       style,
-      ...other
+      ...other,
     } = this.props;
 
     let mergedStyles = this.mergeAndPrefix({
@@ -27,13 +27,13 @@ let ListDivider = React.createClass({
       marginLeft: inset ? 72 : 0,
       height: 1,
       border: 'none',
-      backgroundColor: this.context.muiTheme.palette.borderColor
+      backgroundColor: this.context.muiTheme.palette.borderColor,
     }, style);
 
     return (
       <hr {...other} style={mergedStyles} />
     );
-  }
+  },
 });
 
 module.exports = ListDivider;

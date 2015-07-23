@@ -2,7 +2,6 @@ let React = require('react');
 let Checkbox = require('../checkbox');
 let StylePropable = require('../mixins/style-propable');
 let TableRowColumn = require('./table-row-column');
-let Tooltip = require('../tooltip');
 
 
 let TableRow = React.createClass({
@@ -10,7 +9,7 @@ let TableRow = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -27,7 +26,7 @@ let TableRow = React.createClass({
     striped: React.PropTypes.bool,
     hoverable: React.PropTypes.bool,
     displayBorder: React.PropTypes.bool,
-    displayRowCheckbox: React.PropTypes.bool
+    displayRowCheckbox: React.PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -37,13 +36,13 @@ let TableRow = React.createClass({
       striped: false,
       hoverable: false,
       displayBorder: true,
-      displayRowCheckbox: true
+      displayRowCheckbox: true,
     };
   },
 
   getInitialState() {
     return {
-      hovered: false
+      hovered: false,
     };
   },
 
@@ -70,8 +69,8 @@ let TableRow = React.createClass({
       },
       cell: {
         backgroundColor: cellBgColor,
-        color: this.getTheme().textColor
-      }
+        color: this.getTheme().textColor,
+      },
     };
 
     if (!this.props.displayBorder) {
@@ -89,7 +88,7 @@ let TableRow = React.createClass({
     }
 
     return (
-      <tr className={className} onClick={this._onRowClick} style={this.getStyles().root}>
+      <tr className={className} style={this.getStyles().root}>
         {this._getColumns(columns)}
       </tr>
     );
@@ -103,7 +102,7 @@ let TableRow = React.createClass({
       let key = this.props.rowNumber + '-' + index;
       let {
         content,
-        style
+        style,
       } = columns[index];
       if (content === undefined) content = columns[index];
 
@@ -134,15 +133,15 @@ let TableRow = React.createClass({
         name={key}
         value='selected'
         disabled={!this.props.selectable}
-        defaultChecked={this.props.selected}
-        onCheck={this._onCheck} />;
+        defaultChecked={this.props.selected} />;
 
     return {
       content: checkbox,
       style: {
+        width: 72,
         paddingLeft: 24,
-        paddingRight: 24
-      }
+        paddingRight: 24,
+      },
     };
   },
 
@@ -160,7 +159,10 @@ let TableRow = React.createClass({
 
   _onCellClick(e, columnIndex) {
     if (this.props.selectable && this.props.onCellClick) this.props.onCellClick(e, this.props.rowNumber, columnIndex);
-    if (this.refs.rowSelectCB !== undefined) this.refs.rowSelectCB.setChecked(!this.refs.rowSelectCB.isChecked());
+    if (this.refs.rowSelectCB !== undefined) {
+      this.refs.rowSelectCB.setChecked(!this.refs.rowSelectCB.isChecked());
+      e.ctrlKey = true;
+    }
     this._onRowClick(e);
   },
 
@@ -179,11 +181,6 @@ let TableRow = React.createClass({
       this._onRowHoverExit(e);
     }
   },
-
-  _onCheck(e) {
-    e.ctrlKey = true;
-    this._onCellClick(e, 0);
-  }
 
 });
 
