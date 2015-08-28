@@ -1,3 +1,81 @@
+## 0.10.4
+###### _Aug 8, 2015_
+
+##### Component Fixes / Enhancements
+- TouchRipple - Fixed a bug that caused onClick to not fire on the first click (#1370)
+
+## 0.10.3
+###### _Aug 8, 2015_
+
+##### General
+- We've set up the project to perform automated tests - now we just need to increase our test coverage. :) (#1331)
+- The style auto-prefixer now caches browser test results so that it only has to perform them once.
+
+##### New Components
+- RefreshIndicator (#1312)
+
+##### Component Fixes / Enhancements
+- AppBar - showMenuIconButton now only affects the icon next to the title (#1295, #1182)
+- CardMedia - CardMedia children styles are now being properly merged (#1306)
+- Dialog - fixed a bug that caused the dialog height to be incorrect on window resize (#1305)
+- FloatingActionButton - Added backgroundColor and disabledColor props (#1329)
+- FocusRipples now only get rendered when needed.
+- IconMenu - Added isOpen() (#1288)
+- LeftNav
+  - Added menuItemClassName, menuItemClassNameSubheader, menuItemClassNameLink props (#1318)
+  - Fixed a display problem that cuased icons to not be the correct color (#1324)
+- ListItem - fixed incorrect styling on disabled list items (#1350)
+- SelectField
+  - Fixed a bug that happened when select field was controlled and the value was undefined (#1227)
+  - Fixed error text positioning (#1341, #1111)
+  - Added errorStyle prop (#1341)
+- Snackbar - Clickaway is now properly bound when openOnMount is true (#1327)
+- Tabs - Added contentContainerClassName prop (#1285)
+- TextField - Added underlineStyle prop (#1343)
+- TimePicker - Added pedantic prop (#1275, #1173)
+
+## 0.10.2
+###### _Jul 29, 2015_
+
+##### General
+- Replaced onMouseOver / onMouseOut with onMouseEnter / onMouseLeave to achieve hover affects.
+  This prevented extra unnecessary renders from happening. (#1190)
+- All svg icons inside the /svg-icons folder now uses the PureRenderMixin.
+
+##### Icon Builder
+- Added tests, build process, file template, and file suffix (#1130, #1127, #1126, #1125, #1139)
+
+##### Component Fixes / Enhancements
+- AppBar - Fixed a styling bug in Safari (#1226)
+- Cards can now expand and collapse (#1060)
+- DatePicker
+  - Allow using DatePicker as a controlled input (#1170)
+  - Added valueLink support and openDialog() (#1213)
+  - Fixed a bug that caused dates to get selected when switching months (#1243)
+  - Avoid handling keyboard events when calendar is not active (#1245)
+  - Fixed display glitch on Firefox (#1242, #1248)
+- Dialog
+  - Hitting the ESC key no longer closes the window if modal is set to true (#1187, #1162)
+  - The onShow event now called after all contents in the dialog have been rendered. (#1198)
+- DropDownMenu - Clicking away no longer triggers other click events to happen (#1177, #1174)
+- FocusRipples now only render when actually shown.
+- IconMenu
+  - Fixed a bug that caused a scrollable menu to jump after selecting an item.
+  - Fixed keyboard focus when user hits ESC.
+- LeftNav
+  - Added some Perf improvements (#1184)
+  - Fixed a bug that caused onNavOpen to sometimes not fire (#1225)
+  - Added disableSwipeToOpen prop (#1279)
+- Menu
+  - Performance improvements when opening a menu.
+  - Added animated prop.
+- RaisedButton - Fixed a bug that caused rounded corners not to round (#1048)
+- SelectField - Now passes the index and payload back in the onChange callback (#1193, #1194)
+- Slider - Fixed a bug that caused value to not be set correctly (#1251)
+- Snackbar - Extra props are now being passed down to the root (#1260)
+- SvgIcon - Added code to remove some unnecessary renders on hover.
+- Toolbar - Fixed display glitch on Firefox (#839, #1248)
+
 ## 0.10.1
 ###### _Jul 13, 2015_
 

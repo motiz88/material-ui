@@ -21,6 +21,7 @@ let LeftNav = React.createClass({
 
   propTypes: {
     className: React.PropTypes.string,
+    disableSwipeToOpen: React.PropTypes.bool,
     docked: React.PropTypes.bool,
     header: React.PropTypes.element,
     menuItems: React.PropTypes.array.isRequired,
@@ -29,6 +30,9 @@ let LeftNav = React.createClass({
     onNavClose: React.PropTypes.func,
     openRight: React.PropTypes.bool,
     selectedIndex: React.PropTypes.number,
+    menuItemClassName: React.PropTypes.string,
+    menuItemClassNameSubheader: React.PropTypes.string,
+    menuItemClassNameLink: React.PropTypes.string,
   },
 
   windowListeners: {
@@ -38,6 +42,7 @@ let LeftNav = React.createClass({
 
   getDefaultProps() {
     return {
+      disableSwipeToOpen: false,
       docked: true,
     };
   },
@@ -172,6 +177,9 @@ let LeftNav = React.createClass({
               menuItemStyle={this.mergeAndPrefix(styles.menuItem)}
               menuItemStyleLink={this.mergeAndPrefix(styles.menuItemLink)}
               menuItemStyleSubheader={this.mergeAndPrefix(styles.menuItemSubheader)}
+              menuItemClassName={this.props.menuItemClassName}
+              menuItemClassNameSubheader={this.props.menuItemClassNameSubheader}
+              menuItemClassNameLink={this.props.menuItemClassNameLink}
               selectedIndex={selectedIndex}
               onItemTap={this._onMenuItemClick} />
         </Paper>
@@ -238,7 +246,10 @@ let LeftNav = React.createClass({
   },
 
   _onBodyTouchStart(e) {
-    if (!this.state.open && openNavEventHandler !== this._onBodyTouchStart) {
+    if (!this.state.open &&
+         (openNavEventHandler !== this._onBodyTouchStart ||
+          this.props.disableSwipeToOpen)
+       ) {
       return;
     }
 

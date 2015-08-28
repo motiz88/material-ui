@@ -60,6 +60,13 @@ class LeftNavPage extends React.Component {
         name: 'Props',
         infoArray: [
           {
+            name: 'disableSwipeToOpen',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'Indicates whether swiping sideways when the nav is closed ' +
+              'should open the nav.'
+          },
+          {
             name: 'docked',
             type: 'bool',
             header: 'default: true',
@@ -97,6 +104,24 @@ class LeftNavPage extends React.Component {
             type: 'object',
             header: 'optional',
             desc: 'Override the inline-styles of LeftNav\'s root element.'
+          },
+          {
+            name: 'menuItemClassName',
+            type: 'string',
+            header: 'optional',
+            desc: 'Class name for the menuItem.'
+          },
+          {
+            name: 'menuItemClassNameSubheader',
+            type: 'string',
+            header: 'optional',
+            desc: 'Class name for the subheader menuItem.'
+          },
+          {
+            name: 'menuItemClassNameLink',
+            type: 'string',
+            header: 'optional',
+            desc: 'Class name for the link menuItem.'
           }
         ]
       },
@@ -122,7 +147,8 @@ class LeftNavPage extends React.Component {
             name: 'onChange',
             header: 'function(e, selectedIndex, menuItem)',
             desc: 'Fired when a menu item is clicked that is not the one currently ' +
-              'selected.'
+              'selected. Note that this requires the injectTapEventPlugin component. ' +
+              'See the "Get Started" section for more detail.'
           },
           {
             name: 'onNavOpen',

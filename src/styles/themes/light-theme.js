@@ -34,6 +34,9 @@ let LightTheme = {
         textColor: Colors.darkWhite,
         height: spacing.desktopKeylineIncrement,
       },
+      avatar: {
+        borderColor: 'rgba(0, 0, 0, 0.08)',
+      },
       button: {
         height: 36,
         minWidth: 88,
@@ -114,6 +117,10 @@ let LightTheme = {
         primaryTextColor: Colors.white,
         secondaryColor: palette.primary1Color,
         secondaryTextColor: Colors.white,
+      },
+      refreshIndicator: {
+        strokeColor: Colors.grey300,
+        loadingStrokeColor: palette.primary1Color,
       },
       slider: {
         trackSize: 2,

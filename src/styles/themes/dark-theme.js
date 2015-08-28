@@ -15,6 +15,9 @@ let DarkTheme = {
   getComponentThemes(palette) {
     let cardColor = Colors.grey800;
     return {
+      avatar: {
+        borderColor: 'rgba(0, 0, 0, 0.5)',
+      },
       floatingActionButton: {
         disabledColor: ColorManipulator.fade(palette.textColor, 0.12),
       },
@@ -45,6 +48,10 @@ let DarkTheme = {
         trackOnColor: ColorManipulator.fade(Colors.cyan200, 0.5),
         trackOffColor: 'rgba(255, 255, 255, 0.3)',
         trackDisabledColor: 'rgba(255, 255, 255, 0.1)',
+      },
+      refreshIndicator: {
+        strokeColor: Colors.grey700,
+        loadingStrokeColor: Colors.teal300,
       },
       slider: {
         trackColor: Colors.minBlack,
