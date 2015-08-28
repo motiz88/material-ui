@@ -8,19 +8,19 @@ let FontIcon = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
     color: React.PropTypes.string,
     hoverColor: React.PropTypes.string,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func
+    onMouseLeave: React.PropTypes.func,
+    onMouseEnter: React.PropTypes.func,
   },
 
   getInitialState() {
     return {
-      hovered: false
+      hovered: false,
     };
   },
 
@@ -28,10 +28,10 @@ let FontIcon = React.createClass({
     let {
       color,
       hoverColor,
-      onMouseOut,
-      onMouseOver,
+      onMouseLeave,
+      onMouseEnter,
       style,
-      ...other
+      ...other,
     } = this.props;
 
     let spacing = this.context.muiTheme.spacing;
@@ -45,33 +45,37 @@ let FontIcon = React.createClass({
       fontSize: spacing.iconSize,
       display: 'inline-block',
       userSelect: 'none',
-      transition: Transitions.easeOut()
+      transition: Transitions.easeOut(),
     }, style, {
-      color: this.state.hovered ? onColor : offColor
+      color: this.state.hovered ? onColor : offColor,
     });
 
     return (
       <span
         {...other}
-        onMouseOut={this._handleMouseOut}
-        onMouseOver={this._handleMouseOver}
+        onMouseLeave={this._handleMouseLeave}
+        onMouseEnter={this._handleMouseEnter}
         style={mergedStyles} />
     );
   },
 
-  _handleMouseOut(e) {
-    this.setState({hovered: false});
-    if (this.props.onMouseOut) {
-      this.props.onMouseOut(e);
+  _handleMouseLeave(e) {
+    // hover is needed only when a hoverColor is defined
+    if (this.props.hoverColor !== undefined)
+      this.setState({hovered: false});
+    if (this.props.onMouseLeave) {
+      this.props.onMouseLeave(e);
     }
   },
 
-  _handleMouseOver(e) {
-    this.setState({hovered: true});
-    if (this.props.onMouseOver) {
-      this.props.onMouseOver(e);
+  _handleMouseEnter(e) {
+    // hover is needed only when a hoverColor is defined
+    if (this.props.hoverColor !== undefined)
+      this.setState({hovered: true});
+    if (this.props.onMouseEnter) {
+      this.props.onMouseEnter(e);
     }
-  }
+  },
 });
 
 module.exports = FontIcon;

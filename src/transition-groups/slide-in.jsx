@@ -9,52 +9,60 @@ let SlideIn = React.createClass({
   mixins: [StylePropable],
 
   propTypes: {
-    direction: React.PropTypes.oneOf(['left', 'right', 'up', 'down'])
+    enterDelay: React.PropTypes.number,
+    childStyle: React.PropTypes.object,
+    direction: React.PropTypes.oneOf(['left', 'right', 'up', 'down']),
   },
 
   getDefaultProps() {
     return {
-      direction: 'left'
+      enterDelay: 0,
+      direction: 'left',
     };
   },
 
   render() {
     let {
+      enterDelay,
+      children,
+      childStyle,
       direction,
-      ...other
+      style,
+      ...other,
     } = this.props;
 
-    let styles = this.mergeAndPrefix({
+    let mergedRootStyles = this.mergeAndPrefix({
       position: 'relative',
       overflow: 'hidden',
-      height: '100%'
-    }, this.props.style);
+      height: '100%',
+    }, style);
 
-    return (
-      <ReactTransitionGroup {...other}
-        style={styles}
-        component="div">
-        {this._getSlideInChildren()}
-      </ReactTransitionGroup>
-    );
-  },
-
-  _getSlideInChildren() {
-    return React.Children.map(this.props.children, (child) => {
+    let newChildren = React.Children.map(children, (child) => {
       return (
         <SlideInChild
           key={child.key}
-          direction={this.props.direction}
-          getLeaveDirection={this._getLeaveDirection}>
+          direction={direction}
+          enterDelay={enterDelay}
+          getLeaveDirection={this._getLeaveDirection}
+          style={childStyle}>
           {child}
         </SlideInChild>
       );
     }, this);
+
+    return (
+      <ReactTransitionGroup
+        {...other}
+        style={mergedRootStyles}
+        component="div">
+        {newChildren}
+      </ReactTransitionGroup>
+    );
   },
 
   _getLeaveDirection() {
     return this.props.direction;
-  }
+  },
 
 });
 

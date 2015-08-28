@@ -104,7 +104,7 @@ module.exports = {
 
     if (color.type.indexOf('hsl') > -1) {
       color.values[2] += amount;
-      return  this._decomposeColor(this._convertColorToString(color));
+      return this._decomposeColor(this._convertColorToString(color));
     }
     else if (color.type.indexOf('rgb') > -1) {
       for (let i = 0; i < 3; i++) {
@@ -115,7 +115,7 @@ module.exports = {
 
     if (color.type.indexOf('a') <= -1) color.type += 'a';
 
-    return  this._convertColorToString(color, '0.15');
+    return this._convertColorToString(color, '0.15');
   },
 
   darken(color, amount) {
@@ -123,7 +123,7 @@ module.exports = {
 
     if (color.type.indexOf('hsl') > -1) {
       color.values[2] += amount;
-      return  this._decomposeColor(this._convertColorToString(color));
+      return this._decomposeColor(this._convertColorToString(color));
     }
     else if (color.type.indexOf('rgb') > -1) {
       for (let i = 0; i < 3; i++) {
@@ -160,20 +160,20 @@ module.exports = {
     let levels = {
       'fail': {
         range: [0, 3],
-        color: 'hsl(0, 100%, 40%)'
+        color: 'hsl(0, 100%, 40%)',
       },
       'aa-large': {
         range: [3, 4.5],
-        color: 'hsl(40, 100%, 45%)'
+        color: 'hsl(40, 100%, 45%)',
       },
       'aa': {
         range: [4.5, 7],
-        color: 'hsl(80, 60%, 45%)'
+        color: 'hsl(80, 60%, 45%)',
       },
       'aaa': {
         range: [7, 22],
-        color: 'hsl(95, 60%, 41%)'
-      }
+        color: 'hsl(95, 60%, 41%)',
+      },
     };
 
     let ratio = this.contrastRatio(background, foreground);
@@ -182,5 +182,5 @@ module.exports = {
       let range = levels[level].range;
       if (ratio >= range[0] && ratio <= range[1]) return level;
     }
-  }
+  },
 };

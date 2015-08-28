@@ -1,16 +1,17 @@
-let React = require('react/addons');
-let StylePropable = require('../mixins/style-propable');
-let Colors = require('../styles/colors');
-let CheckIcon = require('../svg-icons/navigation/check');
-let ListItem = require('../lists/list-item');
+const React = require('react/addons');
+const PureRenderMixin = React.addons.PureRenderMixin;
+const StylePropable = require('../mixins/style-propable');
+const Colors = require('../styles/colors');
+const CheckIcon = require('../svg-icons/navigation/check');
+const ListItem = require('../lists/list-item');
 
 
-let MenuItem = React.createClass({
+const MenuItem = React.createClass({
 
-  mixins: [StylePropable],
+  mixins: [PureRenderMixin, StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -19,23 +20,38 @@ let MenuItem = React.createClass({
     disabled: React.PropTypes.bool,
     innerDivStyle: React.PropTypes.object,
     insetChildren: React.PropTypes.bool,
+    focusState: React.PropTypes.oneOf([
+      'none',
+      'focused',
+      'keyboard-focused',
+    ]),
     leftIcon: React.PropTypes.element,
     rightIcon: React.PropTypes.element,
     secondaryText: React.PropTypes.node,
-    value: React.PropTypes.string
+    value: React.PropTypes.string,
   },
 
   getDefaultProps() {
     return {
+      focusState: 'none',
     };
   },
 
-  render() {
+  componentDidMount() {
+    this._applyFocusState();
+  },
 
-    let {
+  componentDidUpdate() {
+    this._applyFocusState();
+  },
+
+  render() {
+    const {
       checked,
+      children,
       desktop,
       disabled,
+      focusState,
       innerDivStyle,
       insetChildren,
       leftIcon,
@@ -43,71 +59,76 @@ let MenuItem = React.createClass({
       secondaryText,
       style,
       value,
-      ...other
+      ...other,
     } = this.props;
 
-    let disabledColor = this.context.muiTheme.palette.disabledColor;
-    let textColor = this.context.muiTheme.palette.textColor;
-    let leftIndent = desktop ? 64 : 72;
-    let sidePadding = desktop ? 24 : 16;
+    const disabledColor = this.context.muiTheme.palette.disabledColor;
+    const textColor = this.context.muiTheme.palette.textColor;
+    const leftIndent = desktop ? 64 : 72;
+    const sidePadding = desktop ? 24 : 16;
 
-    let styles = {
+    const styles = {
       root: {
         color: disabled ? disabledColor : textColor,
         lineHeight: desktop ? '32px' : '48px',
         fontSize: desktop ? 15 : 16,
-        whiteSpace: 'nowrap'
+        whiteSpace: 'nowrap',
       },
 
       innerDivStyle: {
         paddingLeft: leftIcon || insetChildren || checked ? leftIndent : sidePadding,
         paddingRight: sidePadding,
         paddingBottom: 0,
-        paddingTop: 0
+        paddingTop: 0,
       },
 
       secondaryText: {
-        float: 'right'
+        float: 'right',
       },
 
       leftIconDesktop: {
         padding: 0,
         left: 24,
-        top: 4
+        top: 4,
       },
 
       rightIconDesktop: {
         padding: 0,
         right: 24,
         top: 4,
-        fill: Colors.grey600
-      }
+        fill: Colors.grey600,
+      },
     };
-
-    let secondaryTextIsAnElement = React.isValidElement(secondaryText);
-    let leftIconElement = leftIcon ? leftIcon : checked ? <CheckIcon /> : null;
 
     let mergedRootStyles = this.mergeStyles(styles.root, style);
     let mergedInnerDivStyles = this.mergeStyles(styles.innerDivStyle, innerDivStyle);
-    let mergedSecondaryTextStyles = secondaryTextIsAnElement ?
+
+    //Left Icon
+    let leftIconElement = leftIcon ? leftIcon : checked ? <CheckIcon /> : null;
+    if (leftIconElement && desktop) {
+      const mergedLeftIconStyles = this.mergeStyles(styles.leftIconDesktop, leftIconElement.props.style);
+      leftIconElement = React.cloneElement(leftIconElement, {style: mergedLeftIconStyles});
+    }
+
+    //Right Icon
+    let rightIconElement;
+    if (rightIcon) {
+      const mergedRightIconStyles = desktop ?
+        this.mergeStyles(styles.rightIconDesktop, rightIcon.props.style) : null;
+      rightIconElement = React.cloneElement(rightIcon, {style: mergedRightIconStyles});
+    }
+
+    //Secondary Text
+    let secondaryTextElement;
+    if (secondaryText) {
+      const secondaryTextIsAnElement = React.isValidElement(secondaryText);
+      const mergedSecondaryTextStyles = secondaryTextIsAnElement ?
       this.mergeStyles(styles.secondaryText, secondaryText.props.style) : null;
-    let mergedLeftIconStyles = leftIconElement && desktop ?
-      this.mergeStyles(styles.leftIconDesktop, leftIconElement.props.style) : null;
-    let mergedRightIconStyles = rightIcon && desktop ?
-      this.mergeStyles(styles.rightIconDesktop, rightIcon.props.style) : null;
 
-    let secondaryTextElement = secondaryText ? (
-      secondaryTextIsAnElement ?
+      secondaryTextElement = secondaryTextIsAnElement ?
         React.cloneElement(secondaryText, {style: mergedSecondaryTextStyles}) :
-        <div style={styles.secondaryText}>{secondaryText}</div>
-    ) : null;
-
-    let styledLeftIcon = leftIconElement && desktop ?
-      React.cloneElement(leftIconElement, {style: mergedLeftIconStyles}) :
-      leftIconElement;
-
-    let rightIconElement = rightIcon ?
-      React.cloneElement(rightIcon, {style: mergedRightIconStyles}) : null;
+        <div style={styles.secondaryText}>{secondaryText}</div>;
+    }
 
     return (
       <ListItem
@@ -115,14 +136,19 @@ let MenuItem = React.createClass({
         disabled={disabled}
         innerDivStyle={mergedInnerDivStyles}
         insetChildren={insetChildren}
-        leftIcon={styledLeftIcon}
+        leftIcon={leftIconElement}
+        ref="listItem"
         rightIcon={rightIconElement}
         style={mergedRootStyles}>
-        {this.props.children}
+        {children}
         {secondaryTextElement}
       </ListItem>
     );
-  }
+  },
+
+  _applyFocusState() {
+    this.refs.listItem.applyFocusState(this.props.focusState);
+  },
 });
 
 module.exports = MenuItem;

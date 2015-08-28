@@ -13,33 +13,38 @@ let CardTitle = React.createClass({
     titleStyle: React.PropTypes.object,
     subtitle: React.PropTypes.string,
     subtitleColor: React.PropTypes.string,
-    subtitleStyle: React.PropTypes.object
+    subtitleStyle: React.PropTypes.object,
+    expandable: React.PropTypes.bool,
+    showExpandableButton: React.PropTypes.bool,
   },
 
   getDefaultProps() {
     return {
       titleColor: Styles.Colors.darkBlack,
-      subtitleColor: Styles.Colors.lightBlack
+      subtitleColor: Styles.Colors.lightBlack,
     };
   },
+
   getStyles() {
     return {
       root: {
-        padding: 16
+        padding: 16,
+        position: 'relative',
       },
       title: {
         fontSize: 24,
         color: this.props.titleColor,
         display: 'block',
-        lineHeight: '36px'
+        lineHeight: '36px',
       },
       subtitle: {
         fontSize: 14,
         color: this.props.subtitleColor,
-        display: 'block'
-      }
-    }
+        display: 'block',
+      },
+    };
   },
+
   render() {
     let styles = this.getStyles();
     let rootStyle = this.mergeAndPrefix(styles.root, this.props.style);
@@ -50,9 +55,10 @@ let CardTitle = React.createClass({
       <div {...this.props} style={rootStyle}>
         <span style={titleStyle}>{this.props.title}</span>
         <span style={subtitleStyle}>{this.props.subtitle}</span>
+        {this.props.children}
       </div>
     );
-  }
+  },
 });
 
 module.exports = CardTitle;

@@ -1,8 +1,18 @@
 node_modules
 npm-debug.log
 build
+coverage
 
-# Exclude compiled files
-lib
 icon-builder/js
 icon-builder/jsx
+# Don't exclude compiled files (motiz88)
+# lib
+
+# jsx Transform Disk Cache
+.module-cache
+
+# Exclude IDE project folders
+.idea
+
+# OS files
+.DS_STORE

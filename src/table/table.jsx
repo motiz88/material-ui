@@ -4,7 +4,6 @@ let ClickAwayable = require('../mixins/click-awayable');
 let TableHeader = require('./table-header');
 let TableRow = require('./table-row');
 let TableFooter = require('./table-footer');
-let DOM = require('../utils/dom');
 
 
 let Table = React.createClass({
@@ -12,54 +11,73 @@ let Table = React.createClass({
   mixins: [StylePropable, ClickAwayable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
     rowData: React.PropTypes.array.isRequired,
+    canSelectAll: React.PropTypes.bool,
     columnOrder: React.PropTypes.array,
-    headerColumns: React.PropTypes.object,
+    defaultColumnWidth: React.PropTypes.string,
+    deselectOnClickaway: React.PropTypes.bool,
+    displayRowCheckbox: React.PropTypes.bool,
+    displaySelectAll: React.PropTypes.bool,
+    fixedFooter: React.PropTypes.bool,
+    fixedHeader: React.PropTypes.bool,
+    footer: React.PropTypes.element,
     footerColumns: React.PropTypes.object,
     header: React.PropTypes.element,
-    footer: React.PropTypes.element,
+    headerColumns: React.PropTypes.object,
     height: React.PropTypes.string,
-    defaultColumnWidth: React.PropTypes.string,
-    fixedHeader: React.PropTypes.bool,
-    fixedFooter: React.PropTypes.bool,
-    stripedRows: React.PropTypes.bool,
-    showRowHover: React.PropTypes.bool,
-    selectable: React.PropTypes.bool,
     multiSelectable: React.PropTypes.bool,
-    displayRowCheckbox: React.PropTypes.bool,
-    canSelectAll: React.PropTypes.bool,
-    displaySelectAll: React.PropTypes.bool,
-    onRowSelection: React.PropTypes.func,
     onCellClick: React.PropTypes.func,
+    onCellHover: React.PropTypes.func,
+    onCellHoverExit: React.PropTypes.func,
     onRowHover: React.PropTypes.func,
     onRowHoverExit: React.PropTypes.func,
-    onCellHover: React.PropTypes.func,
-    onCellHoverExit: React.PropTypes.func
+    onRowSelection: React.PropTypes.func,
+    preScanRowData: React.PropTypes.bool,
+    selectable: React.PropTypes.bool,
+    showRowHover: React.PropTypes.bool,
+    stripedRows: React.PropTypes.bool,
   },
 
   getDefaultProps() {
     return {
-      fixedHeader: true,
-      fixedFooter: true,
-      height: 'inherit',
-      defaultColumnWidth: '50px',
-      stripedRows: false,
-      showRowHover: false,
-      selectable: true,
-      displayRowCheckbox: true,
-      multiSelectable: false,
       canSelectAll: false,
-      displaySelectAll: true
+      defaultColumnWidth: '50px',
+      deselectOnClickaway: true,
+      displayRowCheckbox: true,
+      displaySelectAll: true,
+      fixedFooter: true,
+      fixedHeader: true,
+      height: 'inherit',
+      multiSelectable: false,
+      preScanRowData: true,
+      selectable: true,
+      showRowHover: false,
+      stripedRows: false,
     };
   },
 
   getInitialState() {
+    // Determine what rows are 'pre-selected'.
+    let preSelectedRows = [];
+    if (this.props.selectable && this.props.preScanRowData) {
+      for (let idx = 0; idx < this.props.rowData.length; idx++) {
+        let row = this.props.rowData[idx];
+        if (row.selected !== undefined && row.selected) {
+          preSelectedRows.push(idx);
+
+          if (!this.props.multiSelectable) {
+            break;
+          }
+        }
+      }
+    }
+
     return {
-      selectedRows: []
+      selectedRows: preSelectedRows,
     };
   },
 
@@ -75,24 +93,26 @@ let Table = React.createClass({
         width: '100%',
         borderCollapse: 'collapse',
         borderSpacing: 0,
-        tableLayout: 'fixed'
+        tableLayout: 'fixed',
       },
       bodyTable: {
         height: (this.props.fixedHeader || this.props.fixedFooter) ? this.props.height : 'auto',
         overflowX: 'hidden',
-        overflowY: 'auto'
+        overflowY: 'auto',
       },
       tableWrapper: {
         height: (this.props.fixedHeader || this.props.fixedFooter) ? 'auto' : this.props.height,
-        overflow: 'auto'
-      }
+        overflow: 'auto',
+      },
     };
 
     return styles;
   },
 
   componentClickAway() {
-    if (this.state.selectedRows.length) this.setState({ selectedRows: [] });
+    if (this.props.deselectOnClickaway && this.state.selectedRows.length) {
+      this.setState({ selectedRows: [] });
+    }
   },
 
   render() {
@@ -255,8 +275,8 @@ let Table = React.createClass({
       if (column.style === undefined) {
         column.style = {
           width: this.props.defaultColumnWidth,
-          maxWidth: this.props.defaultColumnWidth
-        }
+          maxWidth: this.props.defaultColumnWidth,
+        };
       }
       else {
         if (column.style.width === undefined) column.style.width = this.props.defaultColumnWidth;
@@ -295,10 +315,11 @@ let Table = React.createClass({
   },
 
   _handleRowClick(e, rowNumber) {
-    // Prevent text selection while selecting rows.
-    window.getSelection().removeAllRanges();
+    e.stopPropagation();
 
     if (this.props.selectable) {
+      // Prevent text selection while selecting rows.
+      window.getSelection().removeAllRanges();
       this._processRowSelection(e, rowNumber);
     }
   },
@@ -308,7 +329,6 @@ let Table = React.createClass({
 
     if (e.shiftKey && this.props.multiSelectable && selectedRows.length) {
       let lastSelection = selectedRows[selectedRows.length - 1];
-      let start, end, direction;
 
       if (typeof lastSelection === 'object') {
         lastSelection.end = rowNumber;
@@ -340,8 +360,8 @@ let Table = React.createClass({
   },
 
   _handleCellClick(e, rowNumber, columnNumber) {
+    e.stopPropagation();
     if (this.props.onCellClick) this.props.onCellClick(rowNumber, this._getColumnId(columnNumber));
-    this._handleRowClick(e, rowNumber);
   },
 
   _handleRowHover(e, rowNumber) {
@@ -372,8 +392,7 @@ let Table = React.createClass({
     columnId = (this.props.columnOrder.length) ? this.props.columnOrder[columnId] : columnId;
 
     return columnId;
-  }
-
+  },
 
 });
 

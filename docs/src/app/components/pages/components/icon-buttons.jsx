@@ -21,9 +21,9 @@ class IconButtonsPage extends React.Component {
         '<IconButton tooltip="Sort" disabled={true}>\n' +
         '  <FontIcon className="muidocs-icon-custom-sort"/>\n' +
         '</IconButton>\n\n' +
-        '//Adding tooltipPosition to Icon Button\n' +
-        '<IconButton iconClassName="muidocs-icon-custom-github" tooltip="bottom-right"\n' +
-        '            tooltipPosition="bottom-right"/>\n';
+        '//Method 4: Using Google material-icons\n' + 
+        ' <IconButton iconClassName="material-icons" tooltipPosition="bottom-center" \n' + 
+        '  tooltip="Sky">settings_system_daydream</IconButton>';
 
     let desc = (
       <p>
@@ -39,7 +39,7 @@ class IconButtonsPage extends React.Component {
           <li>
             For svg icons: Insert the svg component as a child of icon
             buttons. This is the method we are using. <a title="Source
-            code for ActionGrade" href="https://github.com/mmrtnz/material-ui/blob/font-icon-components/docs/src/app/components/svg-icons/action-grade.jsx">
+            code for ActionGrade" href="https://github.com/callemall/material-ui/blob/master/src/svg-icons/action/grade.jsx">
             View our source</a> to see how ActionGrade was created
             using mui.SvgIcon.
           </li>
@@ -49,6 +49,10 @@ class IconButtonsPage extends React.Component {
             FontIcon</a> component as a child of IconButton. This is
             similiar to how the iconClassName prop from method 1 is
             handled.
+          </li>
+          <li>
+            Google Material Icons: Now also supported for iconButtons by passing "material-icons" in 
+            iconClassName prop.
           </li>
         </ol>
       </p>
@@ -88,6 +92,12 @@ class IconButtonsPage extends React.Component {
             type: 'string',
             header: 'default: bottom-center',
             desc: 'Allows the tooltip to be viewed with different alignments: "bottom-center", "top-center", "bottom-right", "top-right", "bottom-left" and "top-left"'
+          },
+          {
+            name: 'tooltipStyles',
+            type: 'object',
+            header: 'optional',
+            desc: 'Allows modification of tooltip styles.'
           },
           {
             name: 'touch',
@@ -162,6 +172,9 @@ class IconButtonsPage extends React.Component {
         <IconButton tooltip="Sort" disabled={true}>
           <FontIcon className="muidocs-icon-custom-sort"/>
         </IconButton>
+        <br/><br/><br/>
+
+        <IconButton iconClassName="material-icons" tooltip="Sky">settings_system_daydream</IconButton>
       </ComponentDoc>
     );
 

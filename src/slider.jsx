@@ -5,58 +5,98 @@ let Transitions = require('./styles/transitions');
 let FocusRipple = require('./ripples/focus-ripple');
 
 
+/**
+  * Verifies min/max range.
+  * @param   {Object} props         Properties of the React component.
+  * @param   {String} propName      Name of the property to validate.
+  * @param   {String} componentName Name of the component whose property is being validated.
+  * @returns {Object} Returns an Error if min >= max otherwise null.
+  */
+let minMaxPropType = (props, propName, componentName) => {
+  let error = React.PropTypes.number(props, propName, componentName);
+  if (error !== null) return error;
+
+  if (props.min >= props.max) {
+    let errorMsg = (propName === 'min') ? 'min should be less than max' : 'max should be greater than min';
+    return new Error(errorMsg);
+  }
+};
+
+/**
+  * Verifies value is within the min/max range.
+  * @param   {Object} props         Properties of the React component.
+  * @param   {String} propName      Name of the property to validate.
+  * @param   {String} componentName Name of the component whose property is being validated.
+  * @returns {Object} Returns an Error if the value is not within the range otherwise null.
+  */
+let valueInRangePropType = (props, propName, componentName) => {
+  let error = React.PropTypes.number(props, propName, componentName);
+  if (error !== null) return error;
+
+  let value = props[propName];
+  if (value < props.min || props.max < value) {
+    return new Error(propName + ' should be within the range specified by min and max');
+  }
+};
+
+
 let Slider = React.createClass({
 
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
-    required: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    min: React.PropTypes.number,
-    max: React.PropTypes.number,
-    step: React.PropTypes.number,
-    error: React.PropTypes.string,
-    description: React.PropTypes.string,
     name: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func,
-    onFocus: React.PropTypes.func,
+    defaultValue: valueInRangePropType,
+    description: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
+    error: React.PropTypes.string,
+    max: minMaxPropType,
+    min: minMaxPropType,
+    required: React.PropTypes.bool,
+    step: React.PropTypes.number,
     onBlur: React.PropTypes.func,
+    onChange: React.PropTypes.func,
     onDragStart: React.PropTypes.func,
-    onDragStop: React.PropTypes.func
+    onDragStop: React.PropTypes.func,
+    onFocus: React.PropTypes.func,
+    value: valueInRangePropType,
   },
 
   getDefaultProps() {
     return {
-      required: true,
-      disabled: false,
       defaultValue: 0,
-      step: 0.01,
-      min: 0,
+      disabled: false,
       max: 1,
-      dragging: false
+      min: 0,
+      required: true,
+      step: 0.01,
     };
   },
 
   getInitialState() {
     let value = this.props.value;
-    if (value == null) value = this.props.defaultValue;
+    if (value === undefined) {
+      value = this.props.defaultValue;
+    }
     let percent = (value - this.props.min) / (this.props.max - this.props.min);
     if (isNaN(percent)) percent = 0;
+
     return {
-      value: value,
-      percent: percent,
-      focused: false,
       active: false,
-      hovered: false
+      dragging: false,
+      focused: false,
+      hovered: false,
+      percent: percent,
+      value: value,
     };
   },
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.value != null) {
+    if (nextProps.value !== undefined) {
       this.setValue(nextProps.value);
     }
   },
@@ -79,14 +119,14 @@ let Slider = React.createClass({
         height: this.getTheme().handleSizeActive,
         position: 'relative',
         marginTop: 24,
-        marginBottom: 48
+        marginBottom: 48,
       },
       track: {
         position: 'absolute',
         top: (this.getTheme().handleSizeActive - this.getTheme().trackSize) / 2,
         left: 0,
         width: '100%',
-        height: this.getTheme().trackSize
+        height: this.getTheme().trackSize,
       },
       filledAndRemaining: {
         position: 'absolute',
@@ -96,7 +136,7 @@ let Slider = React.createClass({
       },
       percentZeroRemaining: {
         left: 1,
-        marginLeft: gutter
+        marginLeft: gutter,
       },
       handle: {
         boxSizing: 'border-box',
@@ -118,7 +158,7 @@ let Slider = React.createClass({
           Transitions.easeOut('450ms', 'border') + ',' +
           Transitions.easeOut('450ms', 'width') + ',' +
           Transitions.easeOut('450ms', 'height'),
-        overflow: 'visible'
+        overflow: 'visible',
       },
       handleWhenDisabled: {
         boxSizing: 'content-box',
@@ -126,12 +166,12 @@ let Slider = React.createClass({
         backgroundColor: this.getTheme().trackColor,
         width: this.getTheme().handleSizeDisabled,
         height: this.getTheme().handleSizeDisabled,
-        border: '2px solid white'
+        border: '2px solid white',
       },
       handleWhenPercentZero: {
         border: this.getTheme().trackSize + 'px solid ' + this.getTheme().trackColor,
         backgroundColor: this.getTheme().handleFillColor,
-        boxShadow: 'none'
+        boxShadow: 'none',
       },
       handleWhenActive: {
         borderColor: this.getTheme().trackColorSelected,
@@ -140,23 +180,23 @@ let Slider = React.createClass({
         transition:
           Transitions.easeOut('450ms', 'backgroundColor') + ',' +
           Transitions.easeOut('450ms', 'width') + ',' +
-          Transitions.easeOut('450ms', 'height')
+          Transitions.easeOut('450ms', 'height'),
       },
       ripples: {
         height: '300%',
         width: '300%',
         top: '-12px',
-        left: '-12px'
+        left: '-12px',
       },
       handleWhenDisabledAndZero: {
         width: (size / 2) + 'px',
-        height: (size /2) + 'px'
+        height: (size /2) + 'px',
       },
       handleWhenPercentZeroAndHovered: {
         border: this.getTheme().trackSize + 'px solid ' +
           this.getTheme().handleColorZero,
         width: size + 'px',
-        height: size + 'px'
+        height: size + 'px',
       },
     };
     styles.filled = this.mergeAndPrefix(styles.filledAndRemaining, {
@@ -165,13 +205,13 @@ let Slider = React.createClass({
         this.getTheme().trackColor :
         this.getTheme().selectionColor,
       marginRight: fillGutter,
-      width: (this.state.percent * 100) + (this.props.disabled ? -1 : 0) + '%'
+      width: (this.state.percent * 100) + (this.props.disabled ? -1 : 0) + '%',
     });
     styles.remaining = this.mergeAndPrefix(styles.filledAndRemaining, {
       right: 0,
       backgroundColor: this.getTheme().trackColor,
       marginLeft: fillGutter,
-      width: ((1 - this.state.percent) * 100) + (this.props.disabled ? -1 : 0) + '%'
+      width: ((1 - this.state.percent) * 100) + (this.props.disabled ? -1 : 0) + '%',
     });
 
     styles.percentZeroRemaining.width = styles.remaining.width - styles.percentZeroRemaining.left;
@@ -241,10 +281,11 @@ let Slider = React.createClass({
         <div style={sliderStyles}
           onFocus={this._onFocus}
           onBlur={this._onBlur}
-          onMouseOver={this._onMouseOver}
-          onMouseOut={this._onMouseOut}
+          onMouseDown={this._onMouseDown}
+          onMouseEnter={this._onMouseEnter}
+          onMouseLeave={this._onMouseLeave}
           onMouseUp={this._onMouseUp} >
-            <div ref="track" style={trackStyles}>
+          <div ref="track" style={trackStyles}>
               <div style={filledStyles}></div>
               <div style={remainingStyles}></div>
               <Draggable axis="x" bound="point"
@@ -254,7 +295,7 @@ let Slider = React.createClass({
                 onStart={this._onDragStart}
                 onStop={this._onDragStop}
                 onDrag={this._onDragUpdate}
-                onMouseDown={this._onMouseDown}>
+                onMouseDown={this._onMouseDownKnob}>
                   <div style={handleStyles} tabIndex={0}>
                     {focusRipple}
                   </div>
@@ -283,7 +324,7 @@ let Slider = React.createClass({
     // update state
     this.setState({
       value: i,
-      percent: percent
+      percent: percent,
     });
   },
 
@@ -297,7 +338,7 @@ let Slider = React.createClass({
   },
 
   clearValue() {
-    this.setValue(0);
+    this.setValue(this.props.min);
   },
 
   _alignValue(val) {
@@ -326,12 +367,14 @@ let Slider = React.createClass({
         let nextDistance = (cursor + pixelStep) - pos.left;
         if (Math.abs(distance) > Math.abs(nextDistance)) {
           cursor += pixelStep;
-        } else {
+        }
+        else {
           break;
         }
       }
+
       return {
-        left: cursor
+        left: cursor,
       };
     };
   },
@@ -346,26 +389,36 @@ let Slider = React.createClass({
     if (this.props.onBlur) this.props.onBlur(e);
   },
 
-  _onMouseOver() {
+  _onMouseDown(e) {
+    this._pos = e.clientX;
+  },
+
+  _onMouseEnter() {
     this.setState({hovered: true});
   },
 
-  _onMouseOut() {
+  _onMouseLeave() {
     this.setState({hovered: false});
   },
 
-  _onMouseUp() {
+  _onMouseUp(e) {
     if (!this.props.disabled) this.setState({active: false});
+    if (!this.state.dragging && Math.abs(this._pos - e.clientX) < 5) {
+      let pos = e.clientX - React.findDOMNode(this).getBoundingClientRect().left;
+      this._dragX(e, pos);
+    }
+
+    this._pos = undefined;
   },
 
-  _onMouseDown() {
+  _onMouseDownKnob() {
     if (!this.props.disabled) this.setState({active: true});
   },
 
   _onDragStart(e, ui) {
     this.setState({
       dragging: true,
-      active: true
+      active: true,
     });
     if (this.props.onDragStart) this.props.onDragStart(e, ui);
   },
@@ -373,7 +426,7 @@ let Slider = React.createClass({
   _onDragStop(e, ui) {
     this.setState({
       dragging: false,
-      active: false
+      active: false,
     });
     if (this.props.onDragStop) this.props.onDragStop(e, ui);
   },
@@ -401,7 +454,7 @@ let Slider = React.createClass({
 
   _percentToValue(percent) {
     return percent * (this.props.max - this.props.min) + this.props.min;
-  }
+  },
 
 });
 

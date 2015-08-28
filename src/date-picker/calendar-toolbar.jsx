@@ -3,7 +3,6 @@ let DateTime = require('../utils/date-time');
 let IconButton = require('../icon-button');
 let Toolbar = require('../toolbar/toolbar');
 let ToolbarGroup = require('../toolbar/toolbar-group');
-let DropDownMenu = require('../drop-down-menu');
 let NavigationChevronLeft = require('../svg-icons/navigation/chevron-left');
 let NavigationChevronLeftDouble = require('../svg-icons/navigation-chevron-left-double');
 let NavigationChevronRight = require('../svg-icons/navigation/chevron-right');
@@ -21,7 +20,7 @@ let CalendarToolbar = React.createClass({
     nextYear: React.PropTypes.bool,
     prevMonth: React.PropTypes.bool,
     nextMonth: React.PropTypes.bool,
-    hideYearChangeButtons: React.PropTypes.bool
+    hideYearChangeButtons: React.PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -30,13 +29,13 @@ let CalendarToolbar = React.createClass({
       nextYear: true,
       prevMonth: true,
       nextMonth: true,
-      hideYearChangeButtons: false
+      hideYearChangeButtons: false,
     };
   },
 
   getInitialState() {
     return {
-      transitionDirection: 'up'
+      transitionDirection: 'up',
     };
   },
 
@@ -46,7 +45,7 @@ let CalendarToolbar = React.createClass({
     if (nextProps.displayDate !== this.props.displayDate) {
       direction = nextProps.displayDate > this.props.displayDate ? 'up' : 'down';
       this.setState({
-        transitionDirection: direction
+        transitionDirection: direction,
       });
     }
   },
@@ -56,7 +55,7 @@ let CalendarToolbar = React.createClass({
       root: {
         position: 'relative',
         padding: 0,
-        backgroundColor: 'inherit'
+        backgroundColor: 'inherit',
       },
 
       title: {
@@ -68,8 +67,7 @@ let CalendarToolbar = React.createClass({
         width: '100%',
         fontWeight: '500',
         textAlign: 'center',
-        zIndex: -1
-      }
+      },
     };
   },
 
@@ -82,10 +80,17 @@ let CalendarToolbar = React.createClass({
 
     return (
       <Toolbar className="mui-date-picker-calendar-toolbar" style={styles.root} noGutter={true}>
+        <SlideInTransitionGroup
+          style={styles.title}
+          direction={this.state.transitionDirection}>
+          <div key={month + '_' + year}>{month} {year}</div>
+        </SlideInTransitionGroup>
+
         <ToolbarGroup key={0} float="left">
           {prevYearChangeButton}
 
           <IconButton
+            style={styles.button}
             disabled={!this.props.prevMonth}
             onTouchTap={this._prevMonthTouchTap}>
               <NavigationChevronLeft />
@@ -94,6 +99,7 @@ let CalendarToolbar = React.createClass({
 
         <ToolbarGroup key={1} float="right">
           <IconButton
+            style={styles.button}
             disabled={!this.props.nextMonth}
             onTouchTap={this._nextMonthTouchTap}>
               <NavigationChevronRight />
@@ -101,19 +107,13 @@ let CalendarToolbar = React.createClass({
 
           {nextYearChangeButton}
         </ToolbarGroup>
-
-        <SlideInTransitionGroup
-          style={styles.title}
-          direction={this.state.transitionDirection}>
-          <div key={month + '_' + year}>{month} {year}</div>
-        </SlideInTransitionGroup>
       </Toolbar>
     );
   },
 
   _getPrevYearChangeButton() {
     let style = {
-      display: this.props.hideYearChangeButtons ? 'none' : ''
+      display: this.props.hideYearChangeButtons ? 'none' : '',
     };
 
     return (
@@ -128,7 +128,7 @@ let CalendarToolbar = React.createClass({
 
   _getNextYearChangeButton() {
     let style = {
-      display: this.props.hideYearChangeButtons ? 'none' : ''
+      display: this.props.hideYearChangeButtons ? 'none' : '',
     };
 
     return (
@@ -155,7 +155,7 @@ let CalendarToolbar = React.createClass({
 
   _nextMonthTouchTap() {
     if (this.props.onMonthChange && this.props.nextMonth) this.props.onMonthChange(1);
-  }
+  },
 
 });
 

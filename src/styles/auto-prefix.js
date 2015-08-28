@@ -1,10 +1,8 @@
 const isBrowser = typeof window !== 'undefined';
-let prefixed;
-if (isBrowser) {
-  const Modernizr = require('../utils/modernizr.custom');
-  const memoize = require('memoizee');
-  prefixed = (Modernizr.prefixed.bind(Modernizr), {length: 1, resolvers: [String], max: 256});
-}
+const Modernizr = isBrowser ? require('../utils/modernizr.custom') : undefined;
+
+//Keep track of already prefixed keys so we can skip Modernizr prefixing
+let prefixedKeys = {};
 
 module.exports = {
 

@@ -12,6 +12,10 @@ class CodeBlock extends React.Component {
     this.componentDidUpdate = this.componentDidUpdate.bind(this);
   }
 
+  shouldComponentUpdate({children}, nextState){
+    return this.props.children !== children;
+  }
+
   componentDidMount() {
     hljs.highlightBlock(React.findDOMNode(this));
   }
@@ -20,19 +24,19 @@ class CodeBlock extends React.Component {
     hljs.highlightBlock(React.findDOMNode(this));
   }
 
-  getStyles() {
-    let borderColor = this.context.muiTheme.palette.borderColor;
-    return {
-      padding: Spacing.desktopGutter,
-      margin: '0',
-      borderRadius: '0 0 2px 2px',
-      borderTop: 'solid 1px ' + borderColor
-    };
-  }
-
   render() {
+
+    let borderColor = this.context.muiTheme.palette.borderColor;
+
+    let styles = {
+      padding: Spacing.desktopGutter,
+      margin: 0,
+      borderRadius: '0 0 2px 2px',
+      borderTop: 'solid 1px ' + borderColor,
+    };
+
     return (
-      <pre style={this.getStyles()}>
+      <pre style={styles}>
         <code>{this.props.children}</code>
       </pre>
     );

@@ -18,7 +18,8 @@ class DatePickerPage extends React.Component {
       minDate: minDate,
       maxDate: maxDate,
       autoOk: false,
-      showYearSelector: false
+      showYearSelector: false,
+      controlledDate: new Date('2015/07/15')
     };
   }
 
@@ -31,7 +32,12 @@ class DatePickerPage extends React.Component {
       '//Landscape Dialog\n' +
       '<DatePicker\n' +
       '  hintText="Landscape Dialog"\n' +
-      '  mode="landscape"/>\n\n'+
+      '  mode="landscape"/>\n\n' +
+      '//Controlled Input\n' +
+      '<DatePicker\n' +
+      '  hintText="Controlled Date Input"\n' +
+      '  value={this.state.controlledDate}\n' +
+      '  onChange={this._handleChange} />\n\n' +
       '// Ranged Date Picker\n' +
       '<DatePicker\n' +
       '  hintText="Ranged Date Picker"\n' +
@@ -45,10 +51,17 @@ class DatePickerPage extends React.Component {
         name: 'Props',
         infoArray: [
           {
+            name: 'autoOk',
+            type: 'bool',
+            header: 'default: false',
+            desc: 'If true, automatically accept and close the picker on select a date.'
+          },
+          {
             name: 'defaultDate',
             type: 'date object',
             header: 'optional',
-            desc: 'This is the initial date value of the component.'
+            desc: 'This is the initial date value of the component. If either `value` or `valueLink` ' +
+            'is provided they will override this prop with `value` taking precedence.'
           },
           {
             name: 'formatDate',
@@ -58,17 +71,11 @@ class DatePickerPage extends React.Component {
               'the input box. By default, date objects are formatted to M/D/YYYY.'
           },
           {
-            name: 'mode',
-            type: 'one of: portrait, landscape',
-            header: 'default: portrait',
-            desc: 'Tells the component to display the picker in portrait or landscape mode.'
-          },
-          {
-            name: 'minDate',
-            type: 'date object',
+            name: 'hideToolbarYearChange',
+            type: 'boolean',
             header: 'optional',
-            desc: 'The beginning of a range of valid dates. The range includes the startDate. ' +
-              'The default value is current date - 100 years.'
+            desc: 'Hide year change buttons on calendar; good for short time spans. Clicking ' +
+              'the year will always result in selecting a year.'
           },
           {
             name: 'maxDate',
@@ -78,18 +85,24 @@ class DatePickerPage extends React.Component {
               'The default value is current date + 100 years.'
           },
           {
+            name: 'minDate',
+            type: 'date object',
+            header: 'optional',
+            desc: 'The beginning of a range of valid dates. The range includes the startDate. ' +
+              'The default value is current date - 100 years.'
+          },
+          {
+            name: 'mode',
+            type: 'one of: portrait, landscape',
+            header: 'default: portrait',
+            desc: 'Tells the component to display the picker in portrait or landscape mode.'
+          },
+          {
             name: 'shouldDisableDate',
             type: 'function',
             header: 'optional',
             desc: 'Called during render time of a given day. If this method returns false ' +
               'the day is disabled otherwise it is displayed normally.'
-          },
-          {
-            name: 'hideToolbarYearChange',
-            type: 'boolean',
-            header: 'optional',
-            desc: 'Hide year change buttons on calendar; good for short time spans. Clicking ' +
-              'the year will always result in selecting a year.'
           },
           {
             name: 'showYearSelector',
@@ -99,16 +112,16 @@ class DatePickerPage extends React.Component {
               'If false, the year change buttons in the toolbar are hidden.'
           },
           {
-            name: 'autoOk',
-            type: 'bool',
-            header: 'default: false',
-            desc: 'If true, automatically accept and close the picker on select a date.'
-          },
-          {
             name: 'style',
             type: 'object',
             header: 'optional',
             desc: 'Override the inline-styles of DatePicker\'s root element.'
+          },
+          {
+            name: 'textFieldStyle',
+            type: 'object',
+            header: 'optional',
+            desc: 'Override the inline-styles of DatePicker\'s TextField element.'
           }
         ]
       },
@@ -124,7 +137,32 @@ class DatePickerPage extends React.Component {
             name: 'setDate',
             header: 'DatePicker.setDate(d)',
             desc: 'Sets the date value to d, where d is a date object.'
+          },
+          {
+            name: 'openDialog',
+            header: 'DatePicker.openDialog()',
+            desc: 'Opens the date-picker dialog programmatically. Use this if you want to open the ' +
+            'dialog in response to some event other than focus/tap on the input field, such as an ' +
+            'external button click.'
+          },
+          {
+            name: 'focus',
+            header: 'DatePicker.focus()',
+            desc: 'An alias for the `openDialog()` method to allow more generic use alongside `TextField`.'
           }
+        ]
+      },
+      {
+        name: 'Events',
+        infoArray: [
+          {
+            name: 'onChange',
+            header: 'function(nill, date)',
+            desc: 'Callback function that is fired when the date value ' +
+            'changes. Since there is no particular event associated with ' +
+            'the change the first argument will always be null and the second ' +
+            'argument will be the new Date instance.'
+          },
         ]
       }
     ];
@@ -146,6 +184,11 @@ class DatePickerPage extends React.Component {
         <DatePicker
           hintText="Landscape Dialog"
           mode="landscape" />
+
+        <DatePicker
+          hintText="Controlled Date Input"
+          value={this.state.controlledDate}
+          onChange={this._handleChange.bind(this)} />
 
         <DatePicker
           hintText="Ranged Date Picker"
@@ -201,6 +244,9 @@ class DatePickerPage extends React.Component {
     this.setState(state);
   }
 
+  _handleChange(nill, date) {
+    this.setState({controlledDate: date});
+  }
 }
 
 module.exports = DatePickerPage;

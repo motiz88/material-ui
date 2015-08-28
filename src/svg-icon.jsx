@@ -1,87 +1,91 @@
-let React = require('react/addons');
-let StylePropable = require('./mixins/style-propable');
-let Transitions = require('./styles/transitions');
+const React = require('react');
+const StylePropable = require('./mixins/style-propable');
+const Transitions = require('./styles/transitions');
 
 
-let SvgIcon = React.createClass({
+const SvgIcon = React.createClass({
 
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
     color: React.PropTypes.string,
     hoverColor: React.PropTypes.string,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func,
-    viewBox: React.PropTypes.string
+    onMouseEnter: React.PropTypes.func,
+    onMouseLeave: React.PropTypes.func,
+    viewBox: React.PropTypes.string,
   },
 
   getInitialState() {
     return {
-      hovered: false
+      hovered: false,
     };
   },
 
   getDefaultProps() {
     return {
-      viewBox: '0 0 24 24'
+      onMouseEnter: () => {},
+      onMouseLeave: () => {},
+      viewBox: '0 0 24 24',
     };
   },
 
   render() {
-    let {
+    const {
+      children,
       color,
       hoverColor,
-      viewBox,
+      onMouseEnter,
+      onMouseLeave,
       style,
-      ...other
+      viewBox,
+      ...other,
     } = this.props;
 
-    let offColor = color ? color :
-      style && style.fill ? style.fill : this.context.muiTheme.palette.textColor;
-    let onColor = hoverColor ? hoverColor : offColor;
+    const offColor = color ? color :
+      style && style.fill ? style.fill :
+      this.context.muiTheme.palette.textColor;
+    const onColor = hoverColor ? hoverColor : offColor;
 
-    //remove the fill prop so that it doesn't override our computed
-    //fill from above
-    if (style) delete style.fill;
-
-    let mergedStyles = this.mergeAndPrefix({
+    const mergedStyles = this.mergeAndPrefix({
       display: 'inline-block',
       height: 24,
       width: 24,
       userSelect: 'none',
       transition: Transitions.easeOut(),
-      fill: this.state.hovered ? onColor : offColor
-    }, style);
+    }, style, {
+      // Make sure our fill color overrides fill provided in props.style
+      fill: this.state.hovered ? onColor : offColor,
+    });
+
+    const events = hoverColor ? {
+      onMouseEnter: this._handleMouseEnter,
+      onMouseLeave: this._handleMouseLeave,
+    } : {};
 
     return (
       <svg
         {...other}
-        onMouseOut={this._handleMouseOut}
-        onMouseOver={this._handleMouseOver}
+        {...events}
         style={mergedStyles}
         viewBox={viewBox}>
-        {this.props.children}
+        {children}
       </svg>
     );
   },
 
-  _handleMouseOut(e) {
+  _handleMouseLeave(e) {
     this.setState({hovered: false});
-    if (this.props.onMouseOut) {
-      this.props.onMouseOut(e);
-    }
+    this.props.onMouseLeave(e);
   },
 
-  _handleMouseOver(e) {
+  _handleMouseEnter(e) {
     this.setState({hovered: true});
-    if (this.props.onMouseOver) {
-      this.props.onMouseOver(e);
-    }
-  }
+    this.props.onMouseEnter(e);
+  },
 });
 
 module.exports = SvgIcon;

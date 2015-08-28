@@ -3,7 +3,7 @@ let StylePropable = require('../mixins/style-propable');
 let WindowListenable = require('../mixins/window-listenable');
 let KeyCode = require('../utils/key-code');
 let Clock = require('./clock');
-let DialogWindow = require('../dialog-window');
+let Dialog = require('../dialog');
 let FlatButton = require('../flat-button');
 
 
@@ -12,18 +12,18 @@ let TimePickerDialog = React.createClass({
   mixins: [StylePropable, WindowListenable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
     initialTime: React.PropTypes.object,
     onAccept: React.PropTypes.func,
     onShow: React.PropTypes.func,
-    onDismiss: React.PropTypes.func
+    onDismiss: React.PropTypes.func,
   },
 
   windowListeners: {
-    'keyup': '_handleWindowKeyUp'
+    keyup: '_handleWindowKeyUp',
   },
 
 
@@ -36,17 +36,20 @@ let TimePickerDialog = React.createClass({
       initialTime,
       onAccept,
       format,
-      ...other
+      ...other,
     } = this.props;
 
     let styles = {
       root: {
-        fontSize: "14px",
-        color: this.getTheme().clockColor
+        fontSize: 14,
+        color: this.getTheme().clockColor,
       },
       dialogContent: {
-        width: "280px"
-      }
+        width: 280,
+      },
+      body: {
+        padding:0,
+      },
     };
 
     let actions = [
@@ -59,13 +62,14 @@ let TimePickerDialog = React.createClass({
         key={1}
         label="OK"
         secondary={true}
-        onTouchTap={this._handleOKTouchTap} />
+        onTouchTap={this._handleOKTouchTap} />,
     ];
 
     return (
-      <DialogWindow {...other}
+      <Dialog {...other}
         ref="dialogWindow"
         style={this.mergeAndPrefix(styles.root)}
+        bodyStyle={this.mergeAndPrefix(styles.body)}
         actions={actions}
         contentStyle={styles.dialogContent}
         onDismiss={this._handleDialogDismiss}
@@ -75,13 +79,12 @@ let TimePickerDialog = React.createClass({
           ref="clock"
           format={format}
           initialTime={initialTime} />
-      </DialogWindow>
+      </Dialog>
     );
   },
 
   show() {
     this.refs.dialogWindow.show();
-    this.refs.clock.init();
   },
 
   dismiss() {
@@ -119,7 +122,7 @@ let TimePickerDialog = React.createClass({
           break;
       }
     }
-  }
+  },
 
 });
 

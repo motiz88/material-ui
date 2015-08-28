@@ -1,107 +1,175 @@
+#! /usr/bin/env node
+/**
+ * Material UI Icon Builder
+ * ========================
+ * 
+ * Usage: 
+ *
+ * node ./build.js --help
+ *
+ */
 var fs = require('fs');
 var path = require('path');
 var rimraf = require('rimraf');
+var Mustache = require("mustache");
+var _ = require('lodash');
+var glob = require("glob");
+var mkdirp = require("mkdirp");
 
-console.log('** Starting Build');
+const SVG_ICON_RELATIVE_REQUIRE = "require('../../svg-icon')"
+  , SVG_ICON_ABSOLUTE_REQUIRE = "require('material-ui/lib/svg-icon')"
+  , RENAME_FILTER_DEFAULT = './filters/rename/default'
+  , RENAME_FILTER_MUI = './filters/rename/material-design-icons';
 
-var jsxFolder = __dirname + '/jsx';
-var iconRootPath = __dirname + '/node_modules/material-design-icons';
-var folders = fs.readdirSync(iconRootPath);
+const DEFAULT_OPTIONS = {
+  muiRequire: 'absolute',
+  glob: '/**/*.svg',
+  innerPath: '',
+  renameFilter: RENAME_FILTER_DEFAULT
+}
 
-//Clean old files
-rimraf(jsxFolder, function() {
-  //Process each folder
-  fs.mkdirSync(jsxFolder);
-  folders.forEach(processFolder);
-});
+function parseArgs() {
+  return require('yargs')
+  .usage('Build JSX components from SVG\'s.\nUsage: $0')
+  .demand('output-dir')
+  .describe('output-dir', 'Directory to output jsx components')
+  .demand('svg-dir')
+  .describe('svg-dir', 'SVG directory')
+  .describe('glob', 'Glob to match inside of --svg-dir. Default **/*.svg')
+  .describe('inner-path', '"Reach into" subdirs, since libraries like material-design-icons' +
+            ' use arbitrary build directories to organize icons' +
+            ' e.g. "action/svg/production/icon_3d_rotation_24px.svg"')
+  .describe('file-suffix', 'Filter only files ending with a suffix (pretty much only' +
+            ' for material-ui-icons)')
+  .describe('rename-filter', 'Path to JS module used to rename destination filename and path. Default: ' + RENAME_FILTER_DEFAULT)
+  .options('mui-require', {
+    demand: false,
+    describe: 'Load material-ui dependencies (SvgIcon) relatively or absolutely. (absolute|relative). For material-ui distributions, relative, for anything else, you probably want absolute.',
+    type: 'string'
+  })
+  .describe('mui-icons-opts', 'Shortcut to use MUI icons options')
+  .boolean('mui-icons-opts')
+  .argv;
+}
 
-function processFolder(folderName) {
-  try {
+function main(options, cb) {
+  var originalWrite;  // todo, add wiston / other logging tool
 
-    var newIconFolderPath = jsxFolder + '/' + folderName;
-    var svgIconFolderPath = iconRootPath + '/' + folderName + '/svg/production';
+  options = _.defaults(options, DEFAULT_OPTIONS);
+  if (options.disable_log) { // disable console.log opt, used for tests.
+    originalWrite = process.stdout.write;
+  process.stdout.write = function() {};
+  }
 
-    var files = fs.readdirSync(svgIconFolderPath);
+  rimraf.sync(options.outputDir); // Clean old files
+  console.log('** Starting Build');
+  var dirs = fs.readdirSync(options.svgDir);
 
-    rimraf(newIconFolderPath, function() {
-      console.log('\n ' + folderName);
-      fs.mkdirSync(newIconFolderPath);
+  var renameFilter = options.renameFilter;
+  if (_.isString(renameFilter)) {
+    renameFilter = require(renameFilter);
+  }
+  if (!_.isFunction(renameFilter)) {
+    throw Error("renameFilter must be a function");
+  }
 
-      files.forEach(function(fileName) {
-        processFile(folderName, fileName, newIconFolderPath, svgIconFolderPath);
-      });
-    });
+  fs.mkdirSync(options.outputDir);
+  var files = glob.sync(path.join(options.svgDir, options.glob))
+  _.each(files, function(svgPath) {
+    var svgPathObj = path.parse(svgPath);
+    var innerPath = path.dirname(svgPath)
+      .replace(options.svgDir, "")
+      .replace(path.relative(process.cwd(), options.svgDir), "");  // for relative dirs
+    var destPath = renameFilter(svgPathObj, innerPath, options);
 
-  } catch (err) {
-    return;
+    processFile(svgPath, destPath, options);
+  });
+
+  if (cb) {
+    cb();
+  }
+
+  if (options.disable_log) { // bring back stdout 
+    process.stdout.write = originalWrite;
   }
 }
 
-function processFile(folderName, fileName, folderPath, svgFolderPath) {
-  //Only process 24px files
-  var svgFilePath = svgFolderPath + '/' + fileName;
-  var suffix = '_24px.svg';
-  var newFilename;
-  var newFile;
+/*
+ * @param {string} svgPath
+ * Absolute path to svg file to process.
+ *
+ * @param {string} destPath
+ * Path to jsx file relative to {options.outputDir}
+ *
+ * @param {object} options
+ */
+function processFile(svgPath, destPath, options) {
+  var outputFileDir = path.dirname(path.join(options.outputDir, destPath));
 
-  if (fileName.indexOf(suffix, fileName.length - suffix.length) !== -1) {
-    newFilename = fileName.replace(suffix, '.jsx');
-    newFilename = newFilename.slice(3);
-    newFilename = newFilename.replace(/_/g, '-');
-    if (newFilename.indexOf('3d') === 0) {
-      newFilename = 'three-d' + newFilename.slice(2);
-    }
-    newFile = folderPath + '/' + newFilename;
-
-    //console.log('writing ' + newFile);
-    getJsxString(folderName, newFilename, svgFilePath, function(fileString) {
-      fs.writeFileSync(newFile, fileString);
-    });
+  if (!fs.existsSync(outputFileDir)) {
+    console.log("Making dir: " + outputFileDir);
+    mkdirp.sync(outputFileDir);
   }
+  var fileString = getJsxString(svgPath, destPath, options);
+  var absDestPath = path.join(options.outputDir, destPath);
+  fs.writeFileSync(absDestPath, fileString);
 }
 
-function getJsxString(folderName, newFilename, svgFilePath, callback) {
-  var className = newFilename.replace('.jsx', '');
-  className = folderName + '-' + className;
-  className = pascalCase(className);
-  
+
+/**
+ * Return Pascal-Cased classname.
+ *
+ * @param {string} svgPath
+ * @returns {string} class name
+ */
+function pascalCase(destPath) {
+  var splitregex = new RegExp("[" + path.sep + "-]+");
+  var parts = destPath.replace(".jsx", "").split(splitregex);
+  parts = _.map(parts, function(part) { return part.charAt(0).toUpperCase() + part.substring(1); });
+  var className = parts.join('');
+  return className;
+}
+
+function getJsxString(svgPath, destPath, options) {
+  var className = pascalCase(destPath);
+
   console.log('  ' + className);
 
-  //var parser = new xml2js.Parser();
-  fs.readFile(svgFilePath, {encoding: 'utf8'}, function(err, data) {
+  var data = fs.readFileSync(svgPath, {encoding: 'utf8'});
+  var template = fs.readFileSync(path.join(__dirname, "tpl/SvgIcon.js"), {encoding: 'utf8'});
+  //Extract the paths from the svg string
+  var paths = data.slice(data.indexOf('>') + 1);
+  paths = paths.slice(0, -6);
+  //clean xml paths
+  paths = paths.replace('xlink:href="#a"', '');
+  paths = paths.replace('xlink:href="#c"', '');
 
-    //Extract the paths from the svg string
-    var paths = data.slice(data.indexOf('>') + 1);
-    paths = paths.slice(0, -6);
-    //clean xml paths
-    paths = paths.replace('xlink:href="#a"', '');
-    paths = paths.replace('xlink:href="#c"', '');
+  // Node acts wierd if we put this directly into string concatenation
 
-    callback(
-      "let React = require('react');\n" +
-      "let SvgIcon = require('../../svg-icon');\n\n" +
+  var muiRequireStmt = options.muiRequire === "relative" ? SVG_ICON_RELATIVE_REQUIRE : SVG_ICON_ABSOLUTE_REQUIRE;
 
-      "let " + className + " = React.createClass({\n\n" +
+  return Mustache.render(
+    template, {
+      muiRequireStmt: muiRequireStmt,
+      paths: paths,
+      className: className
+    }
+  );
 
-      "  render() {\n" +
-      "    return (\n" +
-      "      <SvgIcon {...this.props}>\n" +
-      "        " + paths + "\n" +
-      "      </SvgIcon>\n" +
-      "    );\n" +
-      "  }\n\n" +
-
-      "});\n\n" +
-
-      "module.exports = " + className + ";"
-    );
-
-  });
 }
 
-function pascalCase(str) {
-  str = str[0].toUpperCase() + str.slice(1);
-  return str.replace(/-(.)/g, function(match, group1) {
-    return group1.toUpperCase();
-  });
+if (require.main === module) {
+  var argv = parseArgs();
+  main(argv);
+}
+
+module.exports = {
+  pascalCase: pascalCase, 
+  getJsxString: getJsxString,
+  processFile: processFile,
+  main: main,
+  SVG_ICON_RELATIVE_REQUIRE: SVG_ICON_RELATIVE_REQUIRE,
+  SVG_ICON_ABSOLUTE_REQUIRE: SVG_ICON_ABSOLUTE_REQUIRE,
+  RENAME_FILTER_DEFAULT: RENAME_FILTER_DEFAULT,
+  RENAME_FILTER_MUI: RENAME_FILTER_MUI
 }

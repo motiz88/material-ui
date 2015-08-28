@@ -1,71 +1,101 @@
-let React = require('react');
-let StylePropable = require('../mixins/style-propable');
-let Transitions = require('../styles/transitions');
-let Colors = require('../styles/colors');
-let AutoPrefix = require('../styles/auto-prefix');
+const React = require('react/addons');
+const PureRenderMixin = React.addons.PureRenderMixin;
+const StylePropable = require('../mixins/style-propable');
+const AutoPrefix = require('../styles/auto-prefix');
+const Colors = require('../styles/colors');
+const Transitions = require('../styles/transitions');
+const ScaleInTransitionGroup = require('../transition-groups/scale-in');
 
 const pulsateDuration = 750;
 
 
-let FocusRipple = React.createClass({
+const FocusRipple = React.createClass({
 
-  mixins: [StylePropable],
+  mixins: [PureRenderMixin, StylePropable],
 
   propTypes: {
     color: React.PropTypes.string,
+    innerStyle: React.PropTypes.object,
     opacity: React.PropTypes.number,
     show: React.PropTypes.bool,
-    innerStyle: React.PropTypes.object
   },
 
   getDefaultProps() {
     return {
-      color: Colors.darkBlack
+      color: Colors.darkBlack,
     };
   },
 
   componentDidMount() {
-    this._setRippleSize();
-    this._pulsate();
+    if (this.props.show) {
+      this._setRippleSize();
+      this._pulsate();
+    }
+  },
+
+  componentDidUpdate() {
+    if (this.props.show) {
+      this._setRippleSize();
+      this._pulsate();
+    } else {
+      if (this._timeout) clearTimeout(this._timeout);
+    }
   },
 
   render() {
 
-    let outerStyles = this.mergeAndPrefix({
+    const {
+      show,
+      style,
+    } = this.props;
+
+    const mergedRootStyles = this.mergeStyles({
       height: '100%',
       width: '100%',
       position: 'absolute',
       top: 0,
       left: 0,
-      transition: Transitions.easeOut(null, 'opacity'),
-      transform: this.props.show ? 'scale(1)' : 'scale(0)',
-      opacity: this.props.show ? 1 : 0,
-      overflow: 'hidden'
-    }, this.props.style);
+    }, style);
 
-    let innerStyles = this.mergeAndPrefix({
+    const ripple = show ? this._getRippleElement(this.props) : null;
+
+    return (
+      <ScaleInTransitionGroup
+        maxScale={0.85}
+        style={mergedRootStyles}>
+        {ripple}
+      </ScaleInTransitionGroup>
+    );
+  },
+
+  _getRippleElement(props) {
+    const {
+      color,
+      innerStyle,
+      opacity,
+    } = props;
+
+    const innerStyles = this.mergeAndPrefix({
       position: 'absolute',
       height: '100%',
       width: '100%',
       borderRadius: '50%',
-      opacity: this.props.opacity ? this.props.opacity : 0.16,
-      backgroundColor: this.props.color,
-      transition: Transitions.easeOut(pulsateDuration + 'ms', null, null, Transitions.easeInOutFunction)
-    }, this.props.innerStyle);
+      opacity: opacity ? opacity : 0.16,
+      backgroundColor: color,
+      transition: Transitions.easeOut(pulsateDuration + 'ms', 'transform', null, Transitions.easeInOutFunction),
+    }, innerStyle);
 
-    return (
-      <div style={outerStyles}>
-        <div ref="innerCircle" style={innerStyles} />
-      </div>
-    );
+    return <div ref="innerCircle" style={innerStyles} />;
   },
 
   _pulsate() {
     if (!this.isMounted()) return;
 
-    let startScale = 'scale(0.75)';
-    let endScale = 'scale(0.85)';
     let innerCircle = React.findDOMNode(this.refs.innerCircle);
+    if (!innerCircle) return;
+
+    const startScale = 'scale(1)';
+    const endScale = 'scale(0.85)';
     let currentScale = innerCircle.style[AutoPrefix.single('transform')];
     let nextScale;
 
@@ -74,18 +104,18 @@ let FocusRipple = React.createClass({
       endScale : startScale;
 
     innerCircle.style[AutoPrefix.single('transform')] = nextScale;
-    setTimeout(this._pulsate, pulsateDuration);
+    this._timeout = setTimeout(this._pulsate, pulsateDuration);
   },
 
   _setRippleSize() {
     let el = React.findDOMNode(this.refs.innerCircle);
-    let height = el.offsetHeight;
-    let width = el.offsetWidth;
-    let size = Math.max(height, width);
+    const height = el.offsetHeight;
+    const width = el.offsetWidth;
+    const size = Math.max(height, width);
 
     el.style.height = size + 'px';
     el.style.top = (size / 2 * -1) + (height / 2) + 'px';
-  }
+  },
 
 });
 

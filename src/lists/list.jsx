@@ -1,44 +1,48 @@
-let React = require('react/addons');
-let StylePropable = require('../mixins/style-propable');
-let Typography = require('../styles/typography');
-let Paper = require('../paper');
+const React = require('react/addons');
+const PureRenderMixin = React.addons.PureRenderMixin;
+const PropTypes = require('../utils/prop-types');
+const StylePropable = require('../mixins/style-propable');
+const Typography = require('../styles/typography');
+const Paper = require('../paper');
 
 
-let List = React.createClass({
+const List = React.createClass({
 
-  mixins: [StylePropable],
+  mixins: [PureRenderMixin, StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
     insetSubheader: React.PropTypes.bool,
     subheader: React.PropTypes.string,
-    subheaderStyle: React.PropTypes.object
+    subheaderStyle: React.PropTypes.object,
+    zDepth: PropTypes.zDepth,
   },
 
   getDefaultProps() {
     return {
-      zDepth: 0
+      zDepth: 0,
     };
   },
 
   render() {
-
-    let {
+    const {
+      children,
       insetSubheader,
       style,
       subheader,
       subheaderStyle,
-      ...other
+      zDepth,
+      ...other,
     } = this.props;
 
-    let styles = {
+    const styles = {
       root: {
         padding: 0,
         paddingBottom: 8,
-        paddingTop: subheader ? 0 : 8
+        paddingTop: subheader ? 0 : 8,
       },
 
       subheader: {
@@ -46,26 +50,26 @@ let List = React.createClass({
         fontSize: 14,
         fontWeight: Typography.fontWeightMedium,
         lineHeight: '48px',
-        paddingLeft: insetSubheader ? 72 : 16
-      }
+        paddingLeft: insetSubheader ? 72 : 16,
+      },
     };
 
-    let mergedRootStyles = this.mergeStyles(styles.root, style);
-    let mergedSubheaderStyles = this.mergeAndPrefix(styles.subheader, subheaderStyle);
-
-    let subheaderElement = subheader ? (
-      <div style={mergedSubheaderStyles}>{subheader}</div>
-    ) : null;
+    let subheaderElement;
+    if (subheader) {
+      const mergedSubheaderStyles = this.mergeAndPrefix(styles.subheader, subheaderStyle);
+      subheaderElement = <div style={mergedSubheaderStyles}>{subheader}</div>;
+    }
 
     return (
       <Paper
         {...other}
-        style={mergedRootStyles}>
+        style={this.mergeStyles(styles.root, style)}
+        zDepth={zDepth}>
         {subheaderElement}
-        {this.props.children}
+        {children}
       </Paper>
     );
-  }
+  },
 });
 
 module.exports = List;

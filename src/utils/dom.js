@@ -3,7 +3,7 @@ module.exports = {
   isDescendant(parent, child) {
     let node = child.parentNode;
 
-    while (node != null) {
+    while (node !== null) {
       if (node === parent) return true;
       node = node.parentNode;
     }
@@ -15,8 +15,18 @@ module.exports = {
     let rect = el.getBoundingClientRect();
     return {
       top: rect.top + document.body.scrollTop,
-      left: rect.left + document.body.scrollLeft
+      left: rect.left + document.body.scrollLeft,
     };
+  },
+
+  getStyleAttributeAsNumber: function(el, attr) {
+    let attrStyle = el.style[attr];
+    let attrNum = 0;
+    if (attrStyle && attrStyle.length) {
+        attrNum = parseInt(attrStyle);
+    }
+
+    return attrNum;
   },
 
   addClass(el, className) {
@@ -56,8 +66,10 @@ module.exports = {
   },
 
   withoutTransition(el, callback) {
+    let originalTransition = el.style.transition;
+
     //turn off transition
-    el.style.transition = 'none';
+    el.style.transition = null;
 
     callback();
 
@@ -65,7 +77,7 @@ module.exports = {
     this.forceRedraw(el);
 
     //put the transition back
-    el.style.transition = '';
-  }
+    el.style.transition = originalTransition;
+  },
 
 };

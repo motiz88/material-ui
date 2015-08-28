@@ -7,7 +7,7 @@ let ToolbarTitle = React.createClass({
   mixins: [StylePropable],
 
   contextTypes: {
-    muiTheme: React.PropTypes.object
+    muiTheme: React.PropTypes.object,
   },
 
   propTypes: {
@@ -22,7 +22,7 @@ let ToolbarTitle = React.createClass({
     let {
       style,
       text,
-      ...other
+      ...other,
     } = this.props;
 
     let styles = this.mergeAndPrefix({
@@ -36,7 +36,7 @@ let ToolbarTitle = React.createClass({
     return (
       <span style={styles} {...other} >{text}</span>
     );
-  }
+  },
 
 });
 
